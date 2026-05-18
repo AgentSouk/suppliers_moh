@@ -561,7 +561,7 @@ export default function AlBaselCatalogPage() {
                   cart.map(item => (
                     <div key={item.id} className="flex gap-4 p-4 rounded-xl border border-gray-100 bg-gray-50">
                       {(item.product as Product).photo && (
-                        <img src={(item.product as Product).photo_sm || (item.product as Product).photo || ""} alt={item.product.name} className="w-20 h-20 object-contain rounded-lg bg-white" />
+                        <img src={(item.product as Product).photo || ""} alt={item.product.name} className="w-20 h-20 object-contain rounded-lg bg-white" />
                       )}
                       <div className="flex-1 min-w-0">
                         <p className="text-xs font-semibold" style={{ color: colors.primary }}>{(item.product as Product).brand}</p>
