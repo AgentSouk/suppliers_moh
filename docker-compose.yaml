@@ -1,0 +1,21 @@
+version: "3.8"
+
+services:
+    nextjs:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        ports:
+            - "3108:3108"
+        environment:
+            - NODE_ENV=production
+            - PORT=3108
+            - HOSTNAME=0.0.0.0
+            - NODE_OPTIONS=--no-deprecation
+        restart: unless-stopped
+        networks:
+            - default
+
+networks:
+    default:
+        driver: bridge
