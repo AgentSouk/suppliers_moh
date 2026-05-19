@@ -429,17 +429,17 @@ export default function SharedCartPage({ params }: { params: Promise<{ id: strin
                     <Tag size={9} className="shrink-0" /><span className="truncate">{item.supplierLabel}</span>
                     {item.product.price && <><span className="text-slate-300 shrink-0">·</span><span className="shrink-0">{item.product.price} AED</span></>}
                   </div>
-                  <div className="inline-flex h-[30px] items-center rounded-lg border border-[#ECEFF3] bg-[#F8FAFC] p-0.5 shrink-0">
+                  <div className="inline-flex h-[24px] sm:h-[30px] items-center rounded-lg border border-[#ECEFF3] bg-[#F8FAFC] p-0.5 shrink-0">
                     <button onClick={() => item.qty <= 1 ? removeItem(item.uid, item.supplier) : updateQty(item.uid, item.supplier, -1)}
-                      className="grid h-[22px] w-[22px] place-items-center rounded-md text-slate-500 hover:bg-white hover:shadow-sm transition-colors">
-                      {item.qty <= 1 ? <Trash2 size={11} className="text-red-400" /> : <Minus size={12} />}
+                      className="grid h-[16px] w-[16px] sm:h-[22px] sm:w-[22px] place-items-center rounded text-slate-500 hover:bg-white hover:shadow-sm transition-colors">
+                      {item.qty <= 1 ? <Trash2 size={10} className="text-red-400" /> : <Minus size={10} />}
                     </button>
                     <input type="text" inputMode="numeric" value={item.qty}
                       onChange={(e) => setQty(item.uid, item.supplier, parseInt(e.target.value.replace(/\D/g, "")) || 1)}
-                      className="min-w-[28px] text-center text-[13px] font-semibold tabular-nums text-slate-900 bg-transparent outline-none" />
+                      className="w-[20px] sm:min-w-[28px] text-center text-[11px] sm:text-[13px] font-semibold tabular-nums text-slate-900 bg-transparent outline-none" />
                     <button onClick={() => updateQty(item.uid, item.supplier, 1)}
-                      className="grid h-[22px] w-[22px] place-items-center rounded-md text-slate-500 hover:bg-white hover:shadow-sm transition-colors">
-                      <Plus size={12} />
+                      className="grid h-[16px] w-[16px] sm:h-[22px] sm:w-[22px] place-items-center rounded text-slate-500 hover:bg-white hover:shadow-sm transition-colors">
+                      <Plus size={10} />
                     </button>
                   </div>
                 </div>
