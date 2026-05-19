@@ -40,7 +40,7 @@ interface Product {
   product_code: string;
   ean: string;
   price: number | null;
-  photo: string;
+  photo: string; photo_sm?: string | null;
   url: string;
   category_id?: string | null;
   sub_category?: string | null;

@@ -21,7 +21,7 @@ const colors = {
 interface Product {
   id?: string; name: string; brand: string;
   sku: string | null; ean: string | null;
-  price: number | null; photo: string | null; images?: string[];
+  price: number | null; photo: string | null; photo_sm?: string | null; images?: string[];
   category?: string; sub_category?: string;
   url: string; supplier: string;
 }

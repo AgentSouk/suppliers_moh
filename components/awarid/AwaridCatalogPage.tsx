@@ -22,7 +22,7 @@ interface Product {
   id?: string; name: string; brand: string;
   sku: string | null; ean: string | null;
   price: number | null; currency?: string;
-  photo: string | null; images?: string[]; description?: string | null;
+  photo: string | null; photo_sm?: string | null; images?: string[]; description?: string | null;
   category?: string; tags?: string[]; available?: boolean;
   url: string; supplier: string;
 }
@@ -250,7 +250,7 @@ export default function AwaridCatalogPage() {
                   <div className="relative bg-gray-50 overflow-hidden" style={{ height: "12rem" }}>
                     {product.photo ? (
                       <ImageGallery
-                        images={[product.photo_sm || product.photo].filter(Boolean)}
+                        images={[product.photo].filter(Boolean)}
                         alt={product.name}
                         mainClassName="w-full h-full object-contain p-3"
                       />

@@ -23,7 +23,7 @@ interface Product {
   id?: string; name: string; brand: string;
   sku: string | null; ean: string | null; color: string | null;
   price: number | null; currency?: string;
-  photo: string | null; images?: string[]; description?: string | null;
+  photo: string | null; photo_sm?: string | null; images?: string[]; description?: string | null;
   category?: string; in_stock?: boolean;
   url: string; supplier: string;
 }
