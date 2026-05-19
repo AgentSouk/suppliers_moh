@@ -100,7 +100,7 @@ function ProductCard({
       {/* Image */}
       <div className="relative aspect-square overflow-hidden bg-ink-50">
         {p.photo ? (
-          <ImageZoom src={p.raw.photo_sm || p.photo} alt={p.name} imgClassName="w-full h-full object-cover" zoomSize={260} zoomScale={2.5} />
+          <ImageZoom src={p.raw.photo_sm || p.photo} zoomSrc={p.photo} alt={p.name} imgClassName="w-full h-full object-cover" zoomSize={260} zoomScale={2.5} />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-ink-300 text-2xl select-none">?</div>
         )}
@@ -201,7 +201,7 @@ function CartPanel({
           supplierLabel: SUPPLIERS[sid]?.label || sid,
           product: {
             name: i.product.name, brand: i.product.raw?.brand, price: i.product.price,
-            photo: i.product.photo, ean: i.product.raw?.ean, sku: i.product.raw?.sku,
+            photo: i.product.photo, photo_sm: i.product.raw?.photo_sm, ean: i.product.raw?.ean, sku: i.product.raw?.sku,
             aki_code: i.product.raw?.aki_code, sub_category: i.product.raw?.sub_category,
             uom: i.product.raw?.uom,
           },

@@ -27,12 +27,16 @@ const ALL_SOURCES = [
 ];
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
-function Thumb({ photo, size = 44 }: { photo?: string | null; size?: number }) {
+function Thumb({ photo, photo_sm, size = 44 }: { photo?: string | null; photo_sm?: string | null; size?: number }) {
+  const src = photo_sm || photo;
   return (
     <div style={{ width: size, height: size, borderRadius: Math.round(size * 0.2), overflow: "hidden", border: "1px solid #ECEFF3", flexShrink: 0, background: "radial-gradient(120% 80% at 50% 30%, #fff 0%, #F1F5F9 100%)" }}>
-      {photo ? (
-        <img src={photo} alt="" className="w-full h-full object-cover"
-          onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+      {src ? (
+        <img src={src} alt="" className="w-full h-full object-cover"
+          onError={(e) => {
+            const img = e.target as HTMLImageElement;
+            if (photo && img.src !== photo) { img.src = photo; } else { img.style.display = "none"; }
+          }} />
       ) : (
         <div className="w-full h-full flex items-center justify-center text-slate-300 text-xs">?</div>
       )}
@@ -333,7 +337,7 @@ export default function SharedCartPage({ params }: { params: Promise<{ id: strin
               {searchResults.map((r) => (
                 <button key={`${r.supplier}-${r.uid}`} onClick={() => addProduct(r)}
                   className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-[#F8FAFC] transition-colors text-left">
-                  <Thumb photo={r.product.photo} size={40} />
+                  <Thumb photo={r.product.photo} photo_sm={r.product.photo_sm} size={40} />
                   <div className="flex-1 min-w-0">
                     <div className="text-[13px] font-medium text-slate-900 line-clamp-1">{r.product.name}</div>
                     <div className="text-[11px] text-slate-400 mt-0.5">{r.supplierLabel}{r.product.price ? ` · ${r.product.price} AED` : ""}</div>
@@ -375,7 +379,7 @@ export default function SharedCartPage({ params }: { params: Promise<{ id: strin
           {filtered.map((item) => (
             <div key={`${item.supplier}-${item.uid}`}
               className="flex items-start gap-3 bg-white rounded-xl border border-[#ECEFF3] px-3 py-3 hover:border-[#DEE3EA] transition-colors">
-              <Thumb photo={item.product.photo} size={44} />
+              <Thumb photo={item.product.photo} photo_sm={item.product.photo_sm} size={44} />
               <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between gap-2">
                   <div className="text-[13px] font-medium text-slate-900 leading-snug">{item.product.name}</div>

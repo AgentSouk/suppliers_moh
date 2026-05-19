@@ -6,6 +6,7 @@ import { createPortal } from "react-dom";
 interface ImageZoomProps {
   src: string;
   alt: string;
+  zoomSrc?: string;    // high-res source for zoom panel; falls back to src
   imgClassName?: string;
   zoomSize?: number;   // zoom panel px (default 380)
   zoomScale?: number;  // magnification (default 2.5)
@@ -13,7 +14,7 @@ interface ImageZoomProps {
 }
 
 export default function ImageZoom({
-  src, alt, imgClassName = "", zoomSize = 380, zoomScale = 2.5, onClick,
+  src, alt, zoomSrc, imgClassName = "", zoomSize = 380, zoomScale = 2.5, onClick,
 }: ImageZoomProps) {
   const [active, setActive] = useState(false);
   const [bgPos, setBgPos] = useState("50% 50%");
@@ -49,7 +50,7 @@ export default function ImageZoom({
       className="fixed z-[9999] rounded-xl border border-gray-200 shadow-2xl pointer-events-none"
       style={{
         ...panelStyle,
-        backgroundImage: `url(${src})`,
+        backgroundImage: `url(${zoomSrc || src})`,
         backgroundSize: `${zoomScale * 100}%`,
         backgroundPosition: bgPos,
         backgroundRepeat: "no-repeat",

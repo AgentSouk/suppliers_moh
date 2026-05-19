@@ -28,6 +28,7 @@ export interface SharedCartItem {
     brand?: string | null;
     price?: number | null;
     photo?: string | null;
+    photo_sm?: string | null;
     ean?: string | null;
     sku?: string | null;
     aki_code?: string | null;
