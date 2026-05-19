@@ -120,10 +120,44 @@ export default function SharedCartPage({ params }: { params: Promise<{ id: strin
 
   // ── Load cart from Supabase ─────────────────────────────────────────────────
   useEffect(() => {
-    loadSharedCart(id).then((rec) => {
+    loadSharedCart(id).then(async (rec) => {
       if (!rec) { setNotFound(true); setLoading(false); return; }
       setRecord(rec);
-      setItems(rec.items || []);
+
+      const rawItems: SharedCartItem[] = rec.items || [];
+
+      // Backfill photo_sm for items that were saved before the field existed
+      const needsEnrich = rawItems.some((i) => !i.product.photo_sm);
+      if (needsEnrich) {
+        const supplierIds = [...new Set(rawItems.filter((i) => !i.product.photo_sm).map((i) => i.supplier))];
+        const jsonBySupplier: Record<string, any[]> = {};
+        await Promise.all(
+          supplierIds.map(async (sid) => {
+            const src = ALL_SOURCES.find((s) => s.sid === sid);
+            if (!src) return;
+            try {
+              const res = await fetch(src.file);
+              jsonBySupplier[sid] = await res.json();
+            } catch {}
+          })
+        );
+
+        const enriched = rawItems.map((item) => {
+          if (item.product.photo_sm) return item;
+          const rows = jsonBySupplier[item.supplier];
+          if (!rows) return item;
+          const src = ALL_SOURCES.find((s) => s.sid === item.supplier);
+          const match = rows.find((row) =>
+            src?.idFields.some((f) => row[f] && row[f] === (item.product as any)[f])
+          );
+          if (!match?.photo_sm) return item;
+          return { ...item, product: { ...item.product, photo_sm: match.photo_sm } };
+        });
+        setItems(enriched);
+      } else {
+        setItems(rawItems);
+      }
+
       setLoading(false);
     });
   }, [id]);
