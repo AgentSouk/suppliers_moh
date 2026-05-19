@@ -467,11 +467,11 @@ function SupplierGroup({
     <div className="rounded-2xl border border-line bg-surface hover:shadow-sm transition-shadow duration-200">
 
       {/* Group header */}
-      <div className="flex items-center gap-4 p-5 border-b border-line"
+      <div className="flex items-center gap-3 px-3 py-3 sm:gap-4 sm:p-5 border-b border-line"
         style={{ background: "linear-gradient(to right, #FCFDFE, #ffffff)" }}>
 
         {/* Logo tile */}
-        <div className="w-11 h-11 rounded-xl bg-ink-50 border border-line flex items-center justify-center shrink-0 overflow-hidden p-1">
+        <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-ink-50 border border-line flex items-center justify-center shrink-0 overflow-hidden p-1">
           <img src={cfg.logo} alt={cfg.label}
             className="max-w-full max-h-full object-contain"
             onError={(e) => {
@@ -483,35 +483,39 @@ function SupplierGroup({
 
         {/* Name + meta */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-0.5 flex-wrap">
-            <span className="text-sm font-semibold text-ink-900">{cfg.label}</span>
-            <span className="inline-flex items-center h-[22px] px-1.5 rounded-full bg-brand-50 text-brand-700 text-[11px] font-semibold">
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <span className="text-sm font-semibold text-ink-900 truncate">{cfg.label}</span>
+            <span className="inline-flex items-center h-[20px] px-1.5 rounded-full bg-brand-50 text-brand-700 text-[11px] font-semibold shrink-0">
               {products.length}
             </span>
             {supplierCartCount > 0 && (
-              <span className="inline-flex items-center gap-1 h-[22px] px-2 rounded-full text-[11px] font-semibold text-white" style={{ background: cfg.accent }}>
+              <span className="inline-flex items-center gap-1 h-[20px] px-2 rounded-full text-[11px] font-semibold text-white shrink-0" style={{ background: cfg.accent }}>
                 <ShoppingCart className="w-2.5 h-2.5" />
-                {supplierCartCount} in cart
+                {supplierCartCount}
               </span>
             )}
           </div>
           {lowestPrice !== null && (
-            <p className="text-sm text-ink-500">
+            <p className="text-xs sm:text-sm text-ink-500 mt-0.5">
               from <span className="font-semibold text-ink-900">{lowestPrice} AED</span>
             </p>
           )}
         </div>
 
         {/* Actions */}
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           <a href={cfg.href}
-            className="h-[34px] px-3 rounded-lg border border-line bg-surface text-sm font-medium text-brand-700 hover:bg-brand-50 transition-colors flex items-center gap-1.5">
+            className="hidden sm:flex h-[34px] px-3 rounded-lg border border-line bg-surface text-sm font-medium text-brand-700 hover:bg-brand-50 transition-colors items-center gap-1.5">
             Browse full catalogue
             <ArrowRight className="w-3.5 h-3.5" />
           </a>
+          <a href={cfg.href}
+            className="flex sm:hidden w-8 h-8 rounded-lg border border-line bg-surface items-center justify-center text-brand-700 hover:bg-brand-50 transition-colors">
+            <ArrowRight className="w-4 h-4" />
+          </a>
           <button
             onClick={() => setCollapsed((v) => !v)}
-            className="w-[34px] h-[34px] rounded-lg border border-line bg-surface flex items-center justify-center text-ink-400 hover:text-ink-700 hover:bg-ink-50 transition-all"
+            className="w-8 h-8 sm:w-[34px] sm:h-[34px] rounded-lg border border-line bg-surface flex items-center justify-center text-ink-400 hover:text-ink-700 hover:bg-ink-50 transition-all"
           >
             <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${collapsed ? "" : "rotate-180"}`} />
           </button>
