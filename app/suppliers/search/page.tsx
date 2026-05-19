@@ -666,7 +666,8 @@ function SearchResults() {
 
       {/* ── Sticky top bar ── */}
       <header className="sticky top-0 z-40 bg-white/85 backdrop-blur-md border-b border-line">
-        <div className="max-w-7xl mx-auto px-8 py-3.5 grid gap-4 items-center"
+        {/* Desktop row */}
+        <div className="hidden sm:grid max-w-7xl mx-auto px-8 py-3.5 gap-4 items-center"
           style={{ gridTemplateColumns: "auto 1fr auto" }}>
 
           {/* Left — breadcrumb */}
@@ -717,10 +718,40 @@ function SearchResults() {
             </button>
           </div>
         </div>
+
+        {/* Mobile row */}
+        <div className="flex sm:hidden items-center gap-2 px-3 py-2.5">
+          <button
+            onClick={() => router.push("/suppliers")}
+            className="shrink-0 w-9 h-9 flex items-center justify-center rounded-lg text-ink-500 hover:text-ink-900 hover:bg-ink-50 transition-colors"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          <form onSubmit={handleSearch} className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-400 pointer-events-none" />
+            <input
+              value={inputVal}
+              onChange={(e) => setInputVal(e.target.value)}
+              placeholder="Search all suppliers…"
+              className="w-full h-[38px] pl-9 pr-3 rounded-[10px] border border-line bg-surface text-sm text-ink-900 placeholder-ink-400 outline-none focus:border-brand focus:ring-4 focus:ring-brand/10 transition-all"
+            />
+          </form>
+          <button
+            onClick={() => setCartOpen(true)}
+            className="relative shrink-0 w-9 h-9 flex items-center justify-center rounded-lg bg-brand text-white hover:bg-brand-600 transition-colors"
+          >
+            <ShoppingCart className="w-4 h-4" />
+            {totalCartItems > 0 && (
+              <span className="absolute -top-1 -right-1 flex items-center justify-center min-w-[16px] h-4 px-1 rounded-full bg-white text-brand text-[10px] font-bold">
+                {totalCartItems}
+              </span>
+            )}
+          </button>
+        </div>
       </header>
 
       {/* ── Results header ── */}
-      <div className="max-w-7xl mx-auto px-8 pt-7 pb-5">
+      <div className="max-w-7xl mx-auto px-4 sm:px-8 pt-5 sm:pt-7 pb-5">
         <div className="flex items-end justify-between gap-4 flex-wrap">
           <div>
             <h1 className="text-2xl font-semibold tracking-tight text-ink-900">
@@ -759,7 +790,7 @@ function SearchResults() {
       </div>
 
       {/* ── Main content ── */}
-      <main className="max-w-7xl mx-auto px-8 pb-16">
+      <main className="max-w-7xl mx-auto px-4 sm:px-8 pb-16">
         {loading && (
           <div className="flex items-center justify-center py-24 gap-3 text-brand">
             <Loader2 className="w-5 h-5 animate-spin" />

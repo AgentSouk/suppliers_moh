@@ -69,8 +69,12 @@ def download_image(src: str, supplier: str) -> bytes | None:
             return local_path.read_bytes()
         return None
 
-    # Remote URL
+    # Remote URL — encode spaces in path (keep query string intact)
     try:
+        from urllib.parse import quote, urlsplit, urlunsplit
+        parts = urlsplit(src)
+        safe_path = quote(parts.path, safe="/:@!$&'()*+,;=")
+        src = urlunsplit((parts.scheme, parts.netloc, safe_path, parts.query, parts.fragment))
         req = urllib.request.Request(src, headers=DOWNLOAD_HEADERS)
         data = urllib.request.urlopen(req, timeout=20).read()
         return data if len(data) > 500 else None
