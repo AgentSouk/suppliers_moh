@@ -44,13 +44,26 @@ function Thumb({ photo, photo_sm, size = 44 }: { photo?: string | null; photo_sm
   );
 }
 
-function SaveIndicator({ state }: { state: "idle" | "saving" | "saved" }) {
-  if (state === "idle") return null;
-  return (
-    <span className={`inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full transition-all ${state === "saving" ? "bg-amber-50 text-amber-600" : "bg-green-50 text-green-600"}`}>
-      {state === "saving" ? <><Loader2 size={10} className="animate-spin" />Saving…</> : <><Check size={10} />Saved</>}
-    </span>
-  );
+function SaveIndicator({ state, lastSaved }: { state: "idle" | "saving" | "saved"; lastSaved: Date | null }) {
+  if (state === "saving") {
+    return (
+      <span className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full bg-amber-50 text-amber-600">
+        <Loader2 size={10} className="animate-spin" />Saving…
+      </span>
+    );
+  }
+  if (state === "saved" || lastSaved) {
+    const ts = lastSaved
+      ? lastSaved.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+      : "";
+    return (
+      <span className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full bg-green-50 text-green-600 whitespace-nowrap">
+        <Check size={10} />
+        {state === "saving" ? "Saving…" : `Saved ${ts}`}
+      </span>
+    );
+  }
+  return null;
 }
 
 // ── PDF generation per supplier ───────────────────────────────────────────────
@@ -101,6 +114,7 @@ export default function SharedCartPage({ params }: { params: Promise<{ id: strin
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved">("idle");
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [activeTab, setActiveTab] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [searchFocused, setSearchFocused] = useState(false);
@@ -170,6 +184,7 @@ export default function SharedCartPage({ params }: { params: Promise<{ id: strin
       try {
         await updateSharedCart(id, nextItems);
         setSaveState("saved");
+        setLastSaved(new Date());
         saveTimer.current = setTimeout(() => setSaveState("idle"), 1800);
       } catch { setSaveState("idle"); }
     }, 600);
@@ -316,7 +331,7 @@ export default function SharedCartPage({ params }: { params: Promise<{ id: strin
             <div className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">Shared Cart · {id}</div>
             <div className="text-[15px] font-semibold text-slate-900 truncate">{record?.location || "—"}</div>
           </div>
-          <SaveIndicator state={saveState} />
+          <SaveIndicator state={saveState} lastSaved={lastSaved} />
           <button className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-slate-100 text-slate-400 transition-colors">
             <MoreHorizontal size={20} />
           </button>

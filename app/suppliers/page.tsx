@@ -19,10 +19,10 @@ const SUPPLIERS = [
   { id: "nazih",        name: "Nazih Group",            subtitle: "Professional beauty products",                  logo: "/logos/nazih.png",         href: "/catalog/nazih",        brands: ["Wella","Schwarzkopf","Indola","Goldwell"],            accent: "#0ea5e9", initials: "NZ" },
   { id: "wella",        name: "Wella Professionals",    subtitle: "Colour · Care · Styling",                       logo: "/logos/wella.svg",         href: "/catalog/wella",        brands: ["Koleston Perfect","Color Touch","Shinefinity","EIMI"],accent: "#000000", initials: "WP" },
   { id: "madi",         name: "Madi International",     subtitle: "Multi-brand professional beauty",               logo: "/logos/madi.svg",          href: "/catalog/madi",         brands: ["Davines","K18","Goldwell","OPI","Kevin Murphy"],      accent: "#1a1a1a", initials: "MI" },
-  { id: "victoriavynn", name: "Victoria Vynn",          subtitle: "Gel polish · Nail art · Accessories",           logo: "/logos/victoriavynn.webp", href: "/catalog/victoriavynn", brands: ["Gel Polishes","Builder Gels","Base Coats","Top Coats"],accent: "#be185d", initials: "VV" },
+  { id: "victoriavynn", name: "Victoria Vynn",          subtitle: "Gel polish · Nail art · Accessories",           logo: "",                         href: "/catalog/victoriavynn", brands: ["Gel Polishes","Builder Gels","Base Coats","Top Coats"],accent: "#be185d", initials: "VV" },
   { id: "skeyndor",     name: "Skeyndor",               subtitle: "Professional skincare",                         logo: "/logos/skeyndor.png",      href: "/catalog/skeyndor",     brands: ["Power Hyaluronic","Global Lift","Power Retinol","Clearist"],accent: "#7c3aed", initials: "SK" },
   { id: "milia",        name: "Milia Cosmetics",        subtitle: "Multi-brand beauty · Nail · Hair · Tools",      logo: "/logos/milia.png",         href: "/catalog/milia",        brands: ["Thuya","Eurostil","Henbor","Kativa"],                 accent: "#0d9488", initials: "ML" },
-  { id: "awarid",       name: "Awarid",                 subtitle: "Multi-brand beauty · Hair · Nails · Equipment", logo: "/logos/awarid.png",        href: "/catalog/awarid",       brands: ["Globalstar","Morfose","Black Professional","Framesi"], accent: "#b45309", initials: "AW" },
+  { id: "awarid",       name: "Awarid",                 subtitle: "Multi-brand beauty · Hair · Nails · Equipment", logo: "",                         href: "/catalog/awarid",       brands: ["Globalstar","Morfose","Black Professional","Framesi"], accent: "#b45309", initials: "AW" },
   { id: "albasel",      name: "Al Basel Cosmetics",     subtitle: "Multi-brand beauty · Hair · Nails · Skin",      logo: "/logos/albasel.svg",       href: "/catalog/albasel",      brands: ["Maybelline","Morfose","Globalstar","BaByliss"],       accent: "#b8860b", initials: "AB" },
   { id: "nawajm",       name: "Nawajm Cosmetics",       subtitle: "Multi-brand beauty · Hair · Grooming · Tools",  logo: "/logos/nawajm.png",        href: "/catalog/nawajm",       brands: ["3Deluxe","Helios","Nishman","Bulbo"],                 accent: "#d97706", initials: "NW" },
 ];
@@ -160,12 +160,16 @@ function CartsOverviewDrawer({
 
               {/* Thumb — supplier logo */}
               <div className="grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-[10px] border border-slate-200 bg-gradient-to-br from-white to-slate-100 p-2">
-                <img src={row.logo} alt="" className="max-w-full max-h-full object-contain"
-                  onError={(e) => {
-                    const el = e.target as HTMLImageElement;
-                    el.style.display = "none";
-                    el.parentElement!.innerHTML = `<span style="font-size:11px;font-weight:700;color:${row.accent}">${row.initials}</span>`;
-                  }} />
+                {row.logo ? (
+                  <img src={row.logo} alt="" className="max-w-full max-h-full object-contain mix-blend-multiply"
+                    onError={(e) => {
+                      const el = e.target as HTMLImageElement;
+                      el.style.display = "none";
+                      el.parentElement!.innerHTML = `<span style="font-size:11px;font-weight:700;color:${row.accent}">${row.initials}</span>`;
+                    }} />
+                ) : (
+                  <span style={{ fontSize: 11, fontWeight: 700, color: row.accent }}>{row.initials}</span>
+                )}
               </div>
 
               {/* Info */}
@@ -369,14 +373,18 @@ export default function SuppliersPage() {
                 className="w-full group relative bg-white rounded-2xl border border-blue-100 shadow-sm hover:shadow-lg hover:border-blue-300 transition-all duration-300 p-7 text-left hover:-translate-y-0.5"
               >
                 <div className="h-10 mb-6 flex items-center">
-                  <img src={s.logo} alt={s.name}
-                    className="max-h-full max-w-[130px] object-contain opacity-70 group-hover:opacity-100 transition-opacity"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).style.display = "none";
-                      (e.target as HTMLImageElement).parentElement!.innerHTML =
-                        `<span style="font-size:1.5rem;font-weight:600;color:${s.accent}">${s.initials}</span>`;
-                    }}
-                  />
+                  {s.logo ? (
+                    <img src={s.logo} alt={s.name}
+                      className="max-h-full max-w-[130px] object-contain opacity-70 group-hover:opacity-100 transition-opacity mix-blend-multiply"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).style.display = "none";
+                        (e.target as HTMLImageElement).parentElement!.innerHTML =
+                          `<span style="font-size:1.5rem;font-weight:600;color:${s.accent}">${s.initials}</span>`;
+                      }}
+                    />
+                  ) : (
+                    <span style={{ fontSize: "1.5rem", fontWeight: 600, color: s.accent }}>{s.initials}</span>
+                  )}
                 </div>
                 <h2 className="text-lg font-semibold text-gray-800 mb-1">{s.name}</h2>
                 <p className="text-xs text-gray-400 mb-5">{s.subtitle}</p>
