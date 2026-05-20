@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useRef, use, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import {
   ArrowLeft, Search, Plus, Minus, Trash2, FileText, FileSpreadsheet,
-  Download, Share2, Copy, Check, X, Clock, Tag, MoreHorizontal,
+  Share2, Copy, Check, X, Clock, Tag, MoreHorizontal,
   ChevronDown, Loader2, Send, Sparkles, User,
 } from "lucide-react";
 import * as XLSX from "xlsx";
@@ -526,19 +526,11 @@ function FooterContent({ items, subtotal, vat, total, totalQty, shareUrl, cartId
         </div>
       </dl>
 
-      {/* PDF button — disabled when multiple suppliers */}
-      {multiSupplier ? (
-        <div className="w-full rounded-xl border border-dashed border-amber-200 bg-amber-50 px-3 py-2.5 flex items-start gap-2">
-          <span className="text-amber-500 text-[13px] shrink-0 mt-px">⚠</span>
-          <p className="text-[11.5px] text-amber-700 leading-snug">
-            Select a single supplier tab above to enable PDF &amp; Excel download.
-          </p>
-        </div>
-      ) : (
-        <button onClick={onPDF}
-          className="w-full h-12 flex items-center justify-center gap-2 rounded-xl bg-[#0091FF] text-white text-[15px] font-semibold shadow-[0_1px_0_rgba(0,107,194,0.5),0_4px_12px_-2px_rgba(0,145,255,0.35)] hover:bg-[#0080E5] transition-colors">
-          <Download size={18} />Download PO PDF
-        </button>
+      {/* Inline hint when multiple suppliers are selected */}
+      {multiSupplier && (
+        <p className="text-[11px] text-amber-600 flex items-center gap-1">
+          <span>⚠</span> Select a single supplier tab to enable PDF &amp; Excel download.
+        </p>
       )}
 
       <div className="flex items-center gap-1.5 rounded-[10px] border border-[#E2E8F0] bg-[#F8FAFC] py-1.5 pl-3 pr-1.5">
