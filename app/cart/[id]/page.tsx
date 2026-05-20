@@ -38,7 +38,13 @@ function Thumb({ photo, photo_sm, size = 44 }: { photo?: string | null; photo_sm
             if (photo && img.src !== photo) { img.src = photo; } else { img.style.display = "none"; }
           }} />
       ) : (
-        <div className="w-full h-full flex items-center justify-center text-slate-300 text-xs">?</div>
+        <div className="w-full h-full flex items-center justify-center">
+          <div style={{ width: size * 0.4, height: size * 0.4, opacity: 0.25 }}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-slate-400 w-full h-full">
+              <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/>
+            </svg>
+          </div>
+        </div>
       )}
     </div>
   );
@@ -204,7 +210,6 @@ export default function SharedCartPage({ params }: { params: Promise<{ id: strin
     });
   }, [id]);
 
-  // ── Auto-save on item changes ───────────────────────────────────────────────
   const triggerSave = useCallback((nextItems: SharedCartItem[]) => {
     if (saveTimer.current) clearTimeout(saveTimer.current);
     setSaveState("saving");
@@ -263,6 +268,9 @@ export default function SharedCartPage({ params }: { params: Promise<{ id: strin
     allProductsRef.current = all;
     return all;
   }, []);
+
+  // Pre-warm search index in the background once the cart is loaded
+  useEffect(() => { if (!loading) loadAll(); }, [loading, loadAll]);
 
   useEffect(() => {
     if (!searchQuery.trim()) { setSearchResults([]); return; }
@@ -406,7 +414,7 @@ export default function SharedCartPage({ params }: { params: Promise<{ id: strin
               {searchResults.map((r) => (
                 <button key={`${r.supplier}-${r.uid}`} onClick={() => addProduct(r)}
                   className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-[#F8FAFC] transition-colors text-left">
-                  <Thumb photo={r.product.photo} photo_sm={r.product.photo_sm} size={40} />
+                  <Thumb photo_sm={r.product.photo_sm} size={40} />
                   <div className="flex-1 min-w-0">
                     <div className="text-[13px] font-medium text-slate-900 line-clamp-1">{r.product.name}</div>
                     <div className="text-[11px] text-slate-400 mt-0.5">{r.supplierLabel}{r.product.price ? ` · ${r.product.price} AED` : ""}</div>
