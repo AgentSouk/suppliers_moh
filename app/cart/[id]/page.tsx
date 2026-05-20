@@ -508,9 +508,15 @@ export default function SharedCartPage({ params }: { params: Promise<{ id: strin
 // ── Footer/sidebar content ────────────────────────────────────────────────────
 function FooterContent({ items, subtotal, vat, total, totalQty, shareUrl, cartId, onPDF, onExcel }: {
   items: SharedCartItem[]; subtotal: number; vat: number; total: number; totalQty: number;
-  shareUrl: string; cartId: string; onPDF: () => void; onExcel: () => void;
+  shareUrl: string; cartId: string; onPDF: () => Promise<void> | void; onExcel: () => void;
 }) {
   const [copied, setCopied] = useState(false);
+  const [pdfGenerating, setPdfGenerating] = useState(false);
+
+  const handlePDF = async () => {
+    setPdfGenerating(true);
+    try { await onPDF(); } finally { setPdfGenerating(false); }
+  };
   const copy = async () => {
     await navigator.clipboard.writeText(shareUrl);
     setCopied(true);
@@ -569,11 +575,19 @@ function FooterContent({ items, subtotal, vat, total, totalQty, shareUrl, cartId
           <FileSpreadsheet size={13} className={multiSupplier ? "text-slate-300" : "text-slate-400"} />Excel
         </button>
         <button
-          onClick={multiSupplier ? undefined : onPDF}
-          disabled={multiSupplier}
+          onClick={multiSupplier || pdfGenerating ? undefined : handlePDF}
+          disabled={multiSupplier || pdfGenerating}
           title={multiSupplier ? "Filter to one supplier first" : undefined}
-          className={`inline-flex h-[32px] items-center justify-center gap-1.5 rounded-[9px] border text-[12.5px] font-medium transition-colors ${multiSupplier ? "border-[#E2E8F0] text-slate-300 cursor-not-allowed" : "border-[#E2E8F0] text-slate-700 hover:bg-slate-50"}`}>
-          <FileText size={13} className={multiSupplier ? "text-slate-300" : "text-slate-400"} />PDF
+          className={`inline-flex h-[32px] items-center justify-center gap-1.5 rounded-[9px] text-[12.5px] font-semibold transition-colors ${
+            multiSupplier
+              ? "border border-[#E2E8F0] text-slate-300 cursor-not-allowed"
+              : pdfGenerating
+              ? "bg-[#0091FF] text-white opacity-80 cursor-wait"
+              : "bg-[#0091FF] text-white shadow-[0_1px_0_rgba(0,107,194,0.5)] hover:bg-[#0080E5]"
+          }`}>
+          {pdfGenerating
+            ? <><Loader2 size={13} className="animate-spin" />Generating…</>
+            : <><FileText size={13} className={multiSupplier ? "text-slate-300" : "text-white"} />PDF</>}
         </button>
       </div>
 
