@@ -22,8 +22,9 @@ import {
   Barcode,
 } from "lucide-react";
 import { createClient } from "@supabase/supabase-js";
-import ImageZoom from "@/components/ui/ImageZoom";
 import { generatePO } from "@/lib/generatePO";
+import CatalogCard from "@/components/catalog/CatalogCard";
+import PaginatedGrid from "@/components/catalog/PaginatedGrid";
 import * as XLSX from "xlsx";
 import { useCart } from "@/lib/useCart";
 
@@ -687,103 +688,6 @@ export default function LorealCatalogPage() {
 
       {/* Products Grid */}
       <div className="px-3 pb-6 pt-3">
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-          {filteredProducts.map((product) => {
-            const inCart = cart.find((c) => c.product.id === product.id);
-
-            return (
-              <div
-                key={product.id}
-                className="rounded-xl border overflow-hidden transition-shadow hover:shadow-md"
-                style={{ background: colors.cardBg, borderColor: colors.border }}
-              >
-                {/* Image */}
-                <div
-                  className={`relative h-48 bg-gray-50 flex items-center justify-center overflow-hidden transition-all ${
-                    updateMode && !product.photo ? "ring-2 ring-amber-400 ring-offset-1" : ""
-                  }`}
-                  onMouseEnter={() => updateMode && setHoveredProduct(product)}
-                  onMouseLeave={() => updateMode && setHoveredProduct(null)}
-                >
-                  {product.photo ? (
-                    <ImageZoom
-                      src={product.photo_sm || product.photo}
-                      alt={product.name}
-                      imgClassName="w-full h-full object-contain p-4"
-                    />
-                  ) : null}
-                  <SearchImagePlaceholder name={product.name} hidden={!!product.photo} />
-                  {updateMode && !product.photo && hoveredProduct?.id === product.id && (
-                    <div className="absolute inset-0 bg-amber-400/20 flex flex-col items-center justify-center gap-1 pointer-events-none">
-                      <span className="text-2xl">📋</span>
-                      <span className="text-xs font-bold text-amber-700 bg-white/80 px-2 py-0.5 rounded">Ctrl+V to paste</span>
-                    </div>
-                  )}
-                  {inCart && (
-                    <div className="absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-bold text-white"
-                      style={{ background: colors.success }}>
-                      <Check className="w-3 h-3 inline mr-1" />
-                      {inCart.quantity} in cart
-                    </div>
-                  )}
-                </div>
-
-                {/* Content */}
-                <div className="p-2.5">
-                  <p className="text-[10px] font-medium uppercase tracking-wide mb-0.5 truncate"
-                    style={{ color: colors.primary }}>
-                    {product.sub_category}
-                  </p>
-                  <h3 className="text-xs font-semibold leading-tight line-clamp-2 mb-2" style={{ color: colors.text }}>
-                    {product.name}
-                  </h3>
-
-                  <div className="space-y-0.5 mb-2">
-                    {product.ean && <p className="text-[10px] font-mono truncate" style={{ color: colors.textMuted }}>{product.ean}</p>}
-                    {product.product_code && <p className="text-[10px] truncate" style={{ color: colors.textMuted }}>{product.product_code}</p>}
-                  </div>
-
-                  <div className="flex items-center justify-between gap-1">
-                    <span className="text-sm font-bold" style={{ color: colors.primary }}>
-                      {product.price ? product.price.toFixed(2) : <span className="text-[10px] text-gray-400">POA</span>}
-                    </span>
-
-                    {inCart ? (
-                      <div className="flex items-center gap-1">
-                        <button
-                          onClick={() => updateQuantity(inCart.id, inCart.quantity - 1)}
-                          className="w-6 h-6 rounded flex items-center justify-center border"
-                          style={{ borderColor: colors.border }}
-                        >
-                          <Minus className="w-3 h-3" />
-                        </button>
-                        <span className="w-5 text-center text-sm font-semibold">{inCart.quantity}</span>
-                        <button
-                          onClick={() => updateQuantity(inCart.id, inCart.quantity + 1)}
-                          className="w-6 h-6 rounded flex items-center justify-center text-white"
-                          style={{ background: colors.primary }}
-                        >
-                          <Plus className="w-3 h-3" />
-                        </button>
-                      </div>
-                    ) : (
-                      <button
-                        onClick={() => addToCart(product)}
-                        disabled={saving}
-                        className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-white text-xs font-medium transition-colors disabled:opacity-50"
-                        style={{ background: colors.primary }}
-                      >
-                        {saving ? <Loader2 className="w-3 h-3 animate-spin" /> : <Plus className="w-3 h-3" />}
-                        Add
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
         {filteredProducts.length > 0 && (
           <p className="text-xs mb-3" style={{ color: colors.textMuted }}>
             Showing {filteredProducts.length} product{filteredProducts.length !== 1 ? "s" : ""}
@@ -791,7 +695,7 @@ export default function LorealCatalogPage() {
           </p>
         )}
 
-        {filteredProducts.length === 0 && (
+        {filteredProducts.length === 0 ? (
           <div className="text-center py-20">
             <Package className="w-12 h-12 mx-auto mb-4" style={{ color: colors.textMuted }} />
             <p className="text-lg font-medium" style={{ color: colors.textMuted }}>
@@ -801,6 +705,39 @@ export default function LorealCatalogPage() {
               Try adjusting your search or category filter
             </p>
           </div>
+        ) : (
+          <PaginatedGrid
+            items={filteredProducts}
+            resetKey={`${selectedCategory}-${selectedBrand}-${searchQuery}`}
+            renderItem={(product) => {
+              const cartItem = cart.find((c) => c.product.id === product.id);
+              const cartQty = cartItem?.quantity ?? 0;
+              return (
+                <CatalogCard
+                  key={product.id}
+                  product={{
+                    id: product.id!,
+                    name: product.name,
+                    brand: product.brand,
+                    subLabel: product.sub_category,
+                    price: product.price,
+                    photo: product.photo,
+                    photo_sm: product.photo_sm,
+                    sku: product.product_code,
+                    ean: product.ean,
+                  }}
+                  accentColor={colors.primary}
+                  cartQty={cartQty}
+                  onAdd={() => addToCart(product)}
+                  onInc={() => updateQuantity(cartItem!.id, cartQty + 1)}
+                  onDec={() => {
+                    if (cartQty > 1) updateQuantity(cartItem!.id, cartQty - 1);
+                    else removeFromCart(cartItem!.id);
+                  }}
+                />
+              );
+            }}
+          />
         )}
       </div>
 

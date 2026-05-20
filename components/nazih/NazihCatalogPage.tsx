@@ -4,8 +4,9 @@ import ShareCartButton from "@/components/ui/ShareCartButton";
 
 import React, { useState, useEffect, useMemo } from "react";
 import { Search, ShoppingCart, Plus, Minus, Trash2, FileText, FileSpreadsheet, X, Check, Loader2, Barcode } from "lucide-react";
-import ImageZoom from "@/components/ui/ImageZoom";
 import { generatePO } from "@/lib/generatePO";
+import CatalogCard from "@/components/catalog/CatalogCard";
+import PaginatedGrid from "@/components/catalog/PaginatedGrid";
 import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
 import { useCart } from "@/lib/useCart";
@@ -363,83 +364,38 @@ export default function NazihCatalogPage() {
           {selectedSubCategory ? ` · ${selectedSubCategory}` : ""}
           {selectedBrand ? ` · ${selectedBrand}` : ""}
         </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {filteredProducts.map((product) => {
+        <PaginatedGrid
+          items={filteredProducts}
+          resetKey={`${selectedCategory}-${selectedSubCategory}-${selectedBrand}-${searchQuery}`}
+          renderItem={(product) => {
             const cartItem = inCart(product);
+            const cartQty = cartItem?.quantity ?? 0;
             return (
-              <div key={product.id} className="rounded-xl border overflow-hidden transition-shadow hover:shadow-md"
-                style={{ background: colors.cardBg, borderColor: colors.border }}>
-
-                {/* Image */}
-                <div className={`relative h-48 bg-gray-50 flex items-center justify-center overflow-hidden transition-all ${updateMode && !product.photo ? "ring-2 ring-amber-400 ring-offset-1" : ""}`}
-                  onMouseEnter={() => updateMode && setHoveredProduct(product)}
-                  onMouseLeave={() => updateMode && setHoveredProduct(null)}>
-                  {product.photo ? (
-                    <ImageZoom
-                      src={product.photo}
-                      alt={product.name}
-                      imgClassName="w-full h-full object-contain p-4"
-                    />
-                  ) : null}
-                  <SearchImagePlaceholder name={product.name} hidden={!!product.photo} />
-                  {updateMode && !product.photo && hoveredProduct?.id === product.id && (
-                    <div className="absolute inset-0 bg-amber-400/20 flex flex-col items-center justify-center gap-1 pointer-events-none">
-                      <span className="text-2xl">📋</span>
-                      <span className="text-xs font-bold text-amber-700 bg-white/80 px-2 py-0.5 rounded">Ctrl+V to paste</span>
-                    </div>
-                  )}
-                  {cartItem && (
-                    <div className="absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-bold text-white" style={{ background: colors.success }}>
-                      <Check className="w-3 h-3 inline mr-1" />{cartItem.quantity} in cart
-                    </div>
-                  )}
-                </div>
-
-                {/* Content */}
-                <div className="p-4">
-                  <div className="flex-1 min-w-0 mb-3">
-                    <p className="text-xs font-medium uppercase tracking-wide mb-0.5" style={{ color: colors.primary }}>{product.brand}</p>
-                    {product.sub_category && <p className="text-[10px] text-gray-400 mb-1">{product.sub_category}</p>}
-                    <h3 className="text-sm font-semibold leading-tight line-clamp-2" style={{ color: colors.text }}>{product.name}</h3>
-                  </div>
-
-                  <div className="space-y-1 mb-4">
-                    {product.ean && <p className="text-xs" style={{ color: colors.textMuted }}>EAN: <span className="font-mono" style={{ color: colors.text }}>{product.ean}</span></p>}
-                    {product.sku && <p className="text-xs" style={{ color: colors.textMuted }}>SKU: <span style={{ color: colors.text }}>{product.sku}</span></p>}
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <span className="text-lg font-bold" style={{ color: colors.primary }}>
-                      {product.price ? product.price.toFixed(2) : "—"}
-                    </span>
-
-                    {cartItem ? (
-                      <div className="flex items-center gap-2">
-                        <button onClick={() => updateQuantity(cartItem.id, cartItem.quantity - 1)}
-                          className="w-8 h-8 rounded-lg flex items-center justify-center border" style={{ borderColor: colors.border }}>
-                          <Minus className="w-4 h-4" />
-                        </button>
-                        <span className="w-8 text-center font-semibold">{cartItem.quantity}</span>
-                        <button onClick={() => updateQuantity(cartItem.id, cartItem.quantity + 1)}
-                          className="w-8 h-8 rounded-lg flex items-center justify-center text-white" style={{ background: colors.primary }}>
-                          <Plus className="w-4 h-4" />
-                        </button>
-                      </div>
-                    ) : (
-                      <button onClick={() => addToCart(product)}
-                        className="flex items-center gap-2 px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors"
-                        style={{ background: colors.primary }}
-                        onMouseEnter={e => (e.currentTarget.style.background = colors.primaryHover)}
-                        onMouseLeave={e => (e.currentTarget.style.background = colors.primary)}>
-                        <Plus className="w-4 h-4" /> Add
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
+              <CatalogCard
+                key={product.id}
+                product={{
+                  id: product.id!,
+                  name: product.name,
+                  brand: product.brand,
+                  subLabel: product.sub_category || product.category,
+                  price: product.price,
+                  photo: product.photo,
+                  photo_sm: product.photo_sm,
+                  sku: product.sku,
+                  ean: product.ean,
+                }}
+                accentColor={colors.primary}
+                cartQty={cartQty}
+                onAdd={() => addToCart(product)}
+                onInc={() => updateQuantity(cartItem!.id, cartQty + 1)}
+                onDec={() => {
+                  if (cartQty > 1) updateQuantity(cartItem!.id, cartQty - 1);
+                  else removeFromCart(cartItem!.id);
+                }}
+              />
             );
-          })}
-        </div>
+          }}
+        />
       </div>
 
       {/* Paste Confirm */}

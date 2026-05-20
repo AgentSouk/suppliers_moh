@@ -9,8 +9,8 @@ import { generatePO } from "@/lib/generatePO";
 import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
 import { useCart } from "@/lib/useCart";
-import ImageZoom from "@/components/ui/ImageZoom";
-import ImageGallery from "@/components/ui/ImageGallery";
+import CatalogCard from "@/components/catalog/CatalogCard";
+import PaginatedGrid from "@/components/catalog/PaginatedGrid";
 
 const colors = {
   primary: "#be185d", primaryHover: "#9d174d",
@@ -217,78 +217,34 @@ export default function VictoriaVynnCatalogPage() {
             <p className="text-sm">Run <code className="bg-gray-100 px-2 py-0.5 rounded">python3 victoriavynn_scraper.py</code> then copy to <code className="bg-gray-100 px-2 py-0.5 rounded">public/</code></p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {filteredProducts.map(product => {
+          <PaginatedGrid
+            items={filteredProducts}
+            resetKey={`${selectedCategory}-${searchQuery}`}
+            renderItem={(product) => {
               const cartItem = inCart(product);
+              const cartQty = cartItem?.quantity ?? 0;
               return (
-                <div key={product.id} className="rounded-xl border overflow-hidden transition-shadow hover:shadow-md flex flex-col"
-                  style={{ background: colors.cardBg, borderColor: colors.border }}>
-
-                  <div className="relative bg-gray-50 overflow-hidden" style={{ height: (product.images?.length ?? 0) > 1 ? "13rem" : "12rem" }}>
-                    {product.photo ? (
-                      <ImageGallery
-                        images={[product.photo_sm || product.photo].filter(Boolean)}
-                        alt={product.name}
-                        mainClassName="w-full h-full object-contain p-3"
-                      />
-                    ) : (
-                      <div className="flex flex-col items-center gap-2">
-                        <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ background: "#fce7f3" }}>
-                          <span className="text-lg font-bold" style={{ color: colors.primary }}>VV</span>
-                        </div>
-                        <span className="text-xs text-gray-300">No image</span>
-                      </div>
-                    )}
-                    {/* Color swatch */}
-                    {product.color && (
-                      <div className="absolute bottom-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-medium bg-white/90 border border-gray-100 text-gray-600">
-                        {product.color}
-                      </div>
-                    )}
-                    {cartItem && (
-                      <div className="absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-bold text-white" style={{ background: colors.success }}>
-                        ✓ {cartItem.quantity}
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="p-4 flex flex-col flex-1">
-                    <div className="flex-1 mb-3">
-                      <p className="text-xs font-semibold uppercase tracking-wide mb-0.5" style={{ color: colors.primary }}>{product.category}</p>
-                      <h3 className="text-sm font-semibold leading-tight line-clamp-2 mb-1" style={{ color: colors.text }}>{product.name}</h3>
-                      {product.sku && <p className="text-xs text-gray-400">Cat. No.: <span className="font-mono text-gray-600">{product.sku}</span></p>}
-                    </div>
-                    <div className="flex items-center justify-between mt-auto">
-                      <span className="text-lg font-bold" style={{ color: colors.primary }}>
-                        {product.price ? `${product.price.toFixed(2)}` : "—"}
-                      </span>
-                      {cartItem ? (
-                        <div className="flex items-center gap-2">
-                          <button onClick={() => updateQuantity(cartItem.id, cartItem.quantity - 1)}
-                            className="w-8 h-8 rounded-lg flex items-center justify-center border" style={{ borderColor: colors.border }}>
-                            <Minus className="w-4 h-4" />
-                          </button>
-                          <span className="w-8 text-center font-semibold">{cartItem.quantity}</span>
-                          <button onClick={() => updateQuantity(cartItem.id, cartItem.quantity + 1)}
-                            className="w-8 h-8 rounded-lg flex items-center justify-center text-white" style={{ background: colors.primary }}>
-                            <Plus className="w-4 h-4" />
-                          </button>
-                        </div>
-                      ) : (
-                        <button onClick={() => addToCart(product)}
-                          className="flex items-center gap-2 px-4 py-2 rounded-lg text-white text-sm font-medium"
-                          style={{ background: colors.primary }}
-                          onMouseEnter={e => (e.currentTarget.style.background = colors.primaryHover)}
-                          onMouseLeave={e => (e.currentTarget.style.background = colors.primary)}>
-                          <Plus className="w-4 h-4" /> Add
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                </div>
+                <CatalogCard
+                  key={product.id}
+                  product={{
+                    id: product.id!,
+                    name: product.name,
+                    brand: product.category || null,
+                    subLabel: product.color || null,
+                    price: product.price,
+                    photo: product.photo,
+                    photo_sm: product.photo_sm,
+                    sku: product.sku,
+                  }}
+                  accentColor={colors.primary}
+                  cartQty={cartQty}
+                  onAdd={() => addToCart(product)}
+                  onInc={() => updateQuantity(cartItem!.id, cartQty + 1)}
+                  onDec={() => updateQuantity(cartItem!.id, cartQty - 1)}
+                />
               );
-            })}
-          </div>
+            }}
+          />
         )}
       </div>
 

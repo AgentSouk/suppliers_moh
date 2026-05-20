@@ -17,6 +17,8 @@ import {
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
+import LazyImage from "@/components/ui/LazyImage";
+import PaginatedGrid from "@/components/catalog/PaginatedGrid";
 
 // ─── Types ────────────────────────────────────────────────────────
 interface EssieProduct {
@@ -419,8 +421,12 @@ export default function EssieCatalogPage() {
           {activeGroup !== "All" ? ` in ${activeGroup}` : ""}
         </p>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-          {filtered.map((product) => {
+        <PaginatedGrid
+          items={filtered}
+          pageSize={60}
+          resetKey={`${activeGroup}-${search}`}
+          gridClassName="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4"
+          renderItem={(product) => {
             const inCart = cartCount(product);
             return (
               <div
@@ -435,16 +441,12 @@ export default function EssieCatalogPage() {
                     setLightboxPhotoIdx(0);
                   }}
                 >
-                  <img
+                  <LazyImage
                     src={product.photo}
                     alt={product.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src =
-                        "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect width='100' height='100' fill='%23f3f4f6'/%3E%3C/svg%3E";
-                    }}
+                    className="w-full h-full"
+                    imgClassName="object-cover group-hover:scale-105 transition-transform duration-300"
                   />
-                  {/* Colour swatch dot */}
                   {COLOUR_SWATCHES[product.colour_group] && (
                     <span
                       className="absolute top-2 left-2 w-4 h-4 rounded-full border-2 border-white shadow"
@@ -489,8 +491,8 @@ export default function EssieCatalogPage() {
                 </div>
               </div>
             );
-          })}
-        </div>
+          }}
+        />
       </main>
 
       {/* Lightbox */}

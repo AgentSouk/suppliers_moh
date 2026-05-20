@@ -9,7 +9,8 @@ import { generatePO } from "@/lib/generatePO";
 import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
 import { useCart } from "@/lib/useCart";
-import ImageZoom from "@/components/ui/ImageZoom";
+import CatalogCard from "@/components/catalog/CatalogCard";
+import PaginatedGrid from "@/components/catalog/PaginatedGrid";
 
 const colors = {
   primary: "#1a1a1a", primaryHover: "#374151",
@@ -260,72 +261,38 @@ export default function MadiCatalogPage() {
             <p className="text-sm">Run <code className="bg-gray-100 px-2 py-0.5 rounded">python3 madi_scraper.py</code> then copy to <code className="bg-gray-100 px-2 py-0.5 rounded">public/</code></p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {filteredProducts.map(product => {
+          <PaginatedGrid
+            items={filteredProducts}
+            resetKey={`${selectedCategory}-${selectedSubCategory}-${selectedBrand}-${searchQuery}`}
+            renderItem={(product) => {
               const cartItem = inCart(product);
+              const cartQty = cartItem?.quantity ?? 0;
               return (
-                <div key={product.id} className="rounded-xl border overflow-hidden transition-shadow hover:shadow-md flex flex-col"
-                  style={{ background: colors.cardBg, borderColor: colors.border }}>
-
-                  <div className="relative h-48 bg-gray-50 flex items-center justify-center overflow-hidden">
-                    {product.photo ? (
-                      <ImageZoom src={product.photo_sm || product.photo} alt={product.name} imgClassName="w-full h-full object-contain p-4" />
-                    ) : (
-                      <div className="flex flex-col items-center gap-2">
-                        <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">
-                          <span className="text-sm font-bold text-gray-400">{(product.brand || "M").slice(0,2).toUpperCase()}</span>
-                        </div>
-                        <span className="text-xs text-gray-300">No image</span>
-                      </div>
-                    )}
-                    {cartItem && (
-                      <div className="absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-bold text-white" style={{ background: colors.success }}>
-                        ✓ {cartItem.quantity}
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="p-4 flex flex-col flex-1">
-                    <div className="flex-1 mb-3">
-                      <p className="text-xs font-medium uppercase tracking-wide mb-0.5" style={{ color: colors.primary }}>{product.brand}</p>
-                      <h3 className="text-sm font-semibold leading-tight line-clamp-2 mb-2" style={{ color: colors.text }}>{product.name}</h3>
-                      {product.sku && (
-                        <p className="text-xs" style={{ color: colors.textMuted }}>
-                          Item Code: <span className="font-mono font-semibold" style={{ color: colors.text }}>{product.sku}</span>
-                        </p>
-                      )}
-                    </div>
-                    <div className="flex items-center justify-between mt-auto">
-                      <span className="text-lg font-bold" style={{ color: colors.primary }}>
-                        {product.price ? product.price.toFixed(2) : "—"}
-                      </span>
-                      {cartItem ? (
-                        <div className="flex items-center gap-2">
-                          <button onClick={() => updateQuantity(cartItem.id, cartItem.quantity - 1)}
-                            className="w-8 h-8 rounded-lg flex items-center justify-center border" style={{ borderColor: colors.border }}>
-                            <Minus className="w-4 h-4" />
-                          </button>
-                          <span className="w-8 text-center font-semibold">{cartItem.quantity}</span>
-                          <button onClick={() => updateQuantity(cartItem.id, cartItem.quantity + 1)}
-                            className="w-8 h-8 rounded-lg flex items-center justify-center text-white" style={{ background: colors.primary }}>
-                            <Plus className="w-4 h-4" />
-                          </button>
-                        </div>
-                      ) : (
-                        <button onClick={() => addToCart(product)}
-                          className="flex items-center gap-2 px-4 py-2 rounded-lg text-white text-sm font-medium"
-                          style={{ background: colors.primary }}
-                          onMouseEnter={e => (e.currentTarget.style.background = colors.primaryHover)}
-                          onMouseLeave={e => (e.currentTarget.style.background = colors.primary)}>
-                          <Plus className="w-4 h-4" /> Add
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                </div>
+                <CatalogCard
+                  key={product.id}
+                  product={{
+                    id: product.id!,
+                    name: product.name,
+                    brand: product.brand,
+                    subLabel: product.sub_category || product.category,
+                    price: product.price,
+                    photo: product.photo,
+                    photo_sm: product.photo_sm,
+                    sku: product.sku,
+                    ean: product.ean,
+                  }}
+                  accentColor={colors.primary}
+                  cartQty={cartQty}
+                  onAdd={() => addToCart(product)}
+                  onInc={() => updateQuantity(cartItem!.id, cartQty + 1)}
+                  onDec={() => {
+                    if (cartQty > 1) updateQuantity(cartItem!.id, cartQty - 1);
+                    else removeFromCart(cartItem!.id);
+                  }}
+                />
               );
-            })}
-          </div>
+            }}
+          />
         )}
       </div>
 
