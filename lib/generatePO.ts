@@ -27,6 +27,7 @@ export interface GeneratePOOptions {
   supplierPrefix: string;   // e.g. "LOP", "NZH", "WEL"
   location: string;
   isColourProduct?: (name: string) => boolean;
+  onProgress?: () => void;  // called once per item after it is drawn
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -85,7 +86,7 @@ async function fetchProductImage(photoUrl: string): Promise<{ data: string; form
 // ── Main generator ────────────────────────────────────────────────────────────
 
 export async function generatePO(options: GeneratePOOptions): Promise<string> {
-  const { cart, supplierName, supplierPrefix, location, isColourProduct } = options;
+  const { cart, supplierName, supplierPrefix, location, isColourProduct, onProgress } = options;
   const orderNum = generateOrderNumber(supplierPrefix);
 
   const doc = new jsPDF("p", "mm", "a4");
@@ -163,8 +164,8 @@ export async function generatePO(options: GeneratePOOptions): Promise<string> {
         if (pageCount >= 2) break;
         doc.addPage(); pageCount++; currentY = 20;
       }
-      await drawColourItem(colourItems[i], margin, currentY);
-      if (colourItems[i + 1]) await drawColourItem(colourItems[i + 1], margin + colW, currentY);
+      await drawColourItem(colourItems[i], margin, currentY); onProgress?.();
+      if (colourItems[i + 1]) { await drawColourItem(colourItems[i + 1], margin + colW, currentY); onProgress?.(); }
       doc.setDrawColor(235, 235, 235);
       doc.setLineWidth(0.3);
       doc.line(margin, currentY + rowH - 1, pageWidth - margin, currentY + rowH - 1);
@@ -283,6 +284,7 @@ export async function generatePO(options: GeneratePOOptions): Promise<string> {
       doc.setFontSize(8); doc.setTextColor(120, 120, 120);
       doc.text(`Line: ${(price * item.quantity).toFixed(2)}`, pageWidth - margin - 2, boxY + 36, { align: "right" });
 
+      onProgress?.();
       currentY += boxH + 4;
     }
 

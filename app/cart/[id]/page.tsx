@@ -72,18 +72,25 @@ const PREFIXES: Record<string, string> = {
   victoriavynn: "VVN", skeyndor: "SKY", milia: "MLI", awarid: "AWR",
 };
 
-async function generatePDFs(items: SharedCartItem[], location: string) {
+async function generatePDFs(
+  items: SharedCartItem[],
+  location: string,
+  onProgress?: (pct: number) => void,
+) {
   const bySupplier = new Map<string, SharedCartItem[]>();
   for (const item of items) {
     if (!bySupplier.has(item.supplier)) bySupplier.set(item.supplier, []);
     bySupplier.get(item.supplier)!.push(item);
   }
+  const total = items.length;
+  let done = 0;
   for (const [sid, sItems] of bySupplier.entries()) {
     await generatePO({
       cart: sItems.map((i) => ({ quantity: i.qty, foc: 0, product: i.product })),
       supplierName: sItems[0].supplierLabel,
       supplierPrefix: PREFIXES[sid] || sid.toUpperCase().slice(0, 3),
       location,
+      onProgress: () => { done++; onProgress?.(Math.round((done / total) * 100)); },
     });
   }
 }
@@ -480,7 +487,7 @@ export default function SharedCartPage({ params }: { params: Promise<{ id: strin
         {items.length > 0 && !searchFocused && (
           <footer className="sticky bottom-0 bg-white border-t border-[#ECEFF3] px-4 pt-3 pb-4 lg:hidden">
             <FooterContent items={filtered} subtotal={filtered.reduce((s,i)=>s+(i.product.price||0)*i.qty,0)} vat={filtered.reduce((s,i)=>s+(i.product.price||0)*i.qty,0)*0.05} total={filtered.reduce((s,i)=>s+(i.product.price||0)*i.qty,0)*1.05} totalQty={filtered.reduce((s,i)=>s+i.qty,0)}
-              shareUrl={localUrl} cartId={id} onPDF={() => generatePDFs(filtered, record?.location || "")}
+              shareUrl={localUrl} cartId={id} onPDF={(onProgress) => generatePDFs(filtered, record?.location || "", onProgress)}
               onExcel={() => generateExcel(filtered, record?.location || "", id)} />
           </footer>
         )}
@@ -495,7 +502,7 @@ export default function SharedCartPage({ params }: { params: Promise<{ id: strin
             </div>
             <div className="px-5 py-4">
               <FooterContent items={filtered} subtotal={filtered.reduce((s,i)=>s+(i.product.price||0)*i.qty,0)} vat={filtered.reduce((s,i)=>s+(i.product.price||0)*i.qty,0)*0.05} total={filtered.reduce((s,i)=>s+(i.product.price||0)*i.qty,0)*1.05} totalQty={filtered.reduce((s,i)=>s+i.qty,0)}
-                shareUrl={localUrl} cartId={id} onPDF={() => generatePDFs(filtered, record?.location || "")}
+                shareUrl={localUrl} cartId={id} onPDF={(onProgress) => generatePDFs(filtered, record?.location || "", onProgress)}
                 onExcel={() => generateExcel(filtered, record?.location || "", id)} />
             </div>
           </div>
@@ -505,17 +512,36 @@ export default function SharedCartPage({ params }: { params: Promise<{ id: strin
   );
 }
 
+// ── Circular progress ring ────────────────────────────────────────────────────
+function CircleProgress({ pct }: { pct: number }) {
+  const r = 9;
+  const circ = 2 * Math.PI * r;
+  return (
+    <svg width="26" height="26" viewBox="0 0 26 26" className="shrink-0">
+      <circle cx="13" cy="13" r={r} fill="none" stroke="rgba(255,255,255,0.25)" strokeWidth="2.5" />
+      <circle cx="13" cy="13" r={r} fill="none" stroke="white" strokeWidth="2.5"
+        strokeDasharray={circ}
+        strokeDashoffset={circ - (pct / 100) * circ}
+        strokeLinecap="round"
+        transform="rotate(-90 13 13)"
+        style={{ transition: "stroke-dashoffset 0.25s ease" }} />
+      <text x="13" y="16.5" textAnchor="middle" fill="white" fontSize="6.5" fontWeight="700">{pct}%</text>
+    </svg>
+  );
+}
+
 // ── Footer/sidebar content ────────────────────────────────────────────────────
 function FooterContent({ items, subtotal, vat, total, totalQty, shareUrl, cartId, onPDF, onExcel }: {
   items: SharedCartItem[]; subtotal: number; vat: number; total: number; totalQty: number;
-  shareUrl: string; cartId: string; onPDF: () => Promise<void> | void; onExcel: () => void;
+  shareUrl: string; cartId: string; onPDF: (onProgress: (pct: number) => void) => Promise<void> | void; onExcel: () => void;
 }) {
   const [copied, setCopied] = useState(false);
-  const [pdfGenerating, setPdfGenerating] = useState(false);
+  const [pdfPct, setPdfPct] = useState<number | null>(null);
+  const pdfGenerating = pdfPct !== null;
 
   const handlePDF = async () => {
-    setPdfGenerating(true);
-    try { await onPDF(); } finally { setPdfGenerating(false); }
+    setPdfPct(0);
+    try { await onPDF((pct) => setPdfPct(pct)); } finally { setPdfPct(null); }
   };
   const copy = async () => {
     await navigator.clipboard.writeText(shareUrl);
@@ -582,11 +608,11 @@ function FooterContent({ items, subtotal, vat, total, totalQty, shareUrl, cartId
             multiSupplier
               ? "border border-[#E2E8F0] text-slate-300 cursor-not-allowed"
               : pdfGenerating
-              ? "bg-[#0091FF] text-white opacity-80 cursor-wait"
+              ? "bg-[#0091FF] text-white cursor-wait px-2"
               : "bg-[#0091FF] text-white shadow-[0_1px_0_rgba(0,107,194,0.5)] hover:bg-[#0080E5]"
           }`}>
           {pdfGenerating
-            ? <><Loader2 size={13} className="animate-spin" />Generating…</>
+            ? <><CircleProgress pct={pdfPct ?? 0} /><span className="text-[11px]">Generating…</span></>
             : <><FileText size={13} className={multiSupplier ? "text-slate-300" : "text-white"} />PDF</>}
         </button>
       </div>
