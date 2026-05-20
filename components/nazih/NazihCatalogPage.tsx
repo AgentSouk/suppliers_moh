@@ -255,7 +255,7 @@ export default function NazihCatalogPage() {
       <div className="px-6 py-4 bg-white/80 backdrop-blur border-b border-blue-50 shadow-sm sticky top-0 z-40">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-3">
-            <img src="/logos/nazih.png" alt="Nazih" className="h-6 sm:h-8 object-contain" onError={e => (e.target as HTMLImageElement).style.display='none'} />
+            <img src="https://nazih.ae/media/logo/stores/1/Nazih-Group-Logo.png" alt="Nazih" className="h-6 sm:h-8 object-contain" onError={e => (e.target as HTMLImageElement).style.display='none'} />
             <div>
               <h1 className="text-xs sm:text-lg font-bold text-gray-900">Nazih Catalogue</h1>
               <p className="text-xs text-gray-400">{products.length} products</p>
