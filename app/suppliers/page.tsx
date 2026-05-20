@@ -285,7 +285,9 @@ export default function SuppliersPage() {
 
   useEffect(() => {
     setMounted(true);
-    setLocation(localStorage.getItem("salon_location") || "");
+    const loc = localStorage.getItem("salon_location") || "";
+    setLocation(loc);
+    document.title = loc ? `${loc} — Order` : "Order";
     const counts: Record<string, number> = {};
     SUPPLIERS.forEach((s) => {
       const cart = readCart(s.id);
@@ -304,8 +306,10 @@ export default function SuppliersPage() {
   }, [location]);
 
   const handleLocation = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLocation(e.target.value);
-    localStorage.setItem("salon_location", e.target.value);
+    const val = e.target.value;
+    setLocation(val);
+    localStorage.setItem("salon_location", val);
+    document.title = val ? `${val} — Order` : "Order";
   };
 
   const totalCartItems = Object.values(cartCounts).reduce((a, b) => a + b, 0);

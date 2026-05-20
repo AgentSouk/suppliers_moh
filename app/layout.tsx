@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "3ish",
+  title: "Order",
   description: "Professional beauty product catalogues",
 };
 
