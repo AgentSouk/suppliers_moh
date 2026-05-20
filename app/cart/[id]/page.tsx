@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef, use, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import {
-  ArrowLeft, Search, Plus, Minus, Trash2, FileText, FileSpreadsheet,
+  ArrowLeft, Search, Plus, Minus, Trash2, FileText,
   Share2, Copy, Check, X, Clock, Tag, MoreHorizontal,
   Loader2, Send, Sparkles, User,
 } from "lucide-react";
@@ -553,53 +553,39 @@ function FooterContent({ items, subtotal, vat, total, totalQty, shareUrl, cartId
   const multiSupplier = uniqueSuppliers > 1;
 
   return (
-    <div className="flex flex-col gap-2">
-      <dl className="grid gap-1 text-[13px] text-slate-500">
-        <div className="flex items-center justify-between">
-          <dt>Subtotal · {totalQty} unit{totalQty !== 1 ? "s" : ""}</dt>
-          <dd className="font-semibold tabular-nums text-slate-900">{subtotal.toFixed(2)} AED</dd>
-        </div>
-        <div className="flex items-center justify-between">
-          <dt>VAT (5%)</dt>
-          <dd className="font-semibold tabular-nums text-slate-900">{vat.toFixed(2)} AED</dd>
-        </div>
-        <div className="flex items-baseline justify-between pt-1.5 mt-0.5 border-t border-dashed border-[#ECEFF3]">
-          <dt className="text-[14px] font-semibold text-slate-900">Total</dt>
-          <dd className="text-[19px] font-bold tracking-tight tabular-nums text-slate-900">
-            {total.toFixed(2)}<span className="ml-1 font-mono text-[11px] font-normal text-slate-500">AED</span>
-          </dd>
-        </div>
-      </dl>
+    <div className="flex flex-col gap-1.5">
 
-      {/* Inline hint when multiple suppliers are selected */}
-      {multiSupplier && (
-        <p className="text-[11px] text-amber-600 flex items-center gap-1">
-          <span>⚠</span> Select a single supplier tab to enable PDF &amp; Excel download.
-        </p>
-      )}
-
-      <div className="flex items-center gap-1.5 rounded-[10px] border border-[#E2E8F0] bg-[#F8FAFC] py-1.5 pl-3 pr-1.5">
-        <span className="flex-1 min-w-0 truncate font-mono text-[11px] text-slate-400"
-          style={{ direction: "rtl", textAlign: "left" }} title={shareUrl}>{"⁦" + shareUrl + "⁩"}</span>
-        <div className="flex items-center gap-1 shrink-0">
-          <button onClick={copy} className="grid h-7 w-7 place-items-center rounded-md text-slate-400 hover:bg-white hover:text-slate-700 transition-colors">
-            {copied ? <Check size={13} className="text-green-500" /> : <Copy size={13} />}
-          </button>
-          <button onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(shareUrl)}`, "_blank")}
-            className="inline-flex h-7 items-center gap-1 rounded-md bg-[#25D366] px-2 text-[11px] font-semibold text-white hover:bg-[#1FBB58] transition-colors">
-            <Send size={11} />WA
-          </button>
+      {/* Total + incl. VAT */}
+      <div className="flex items-start justify-between">
+        <div>
+          <div className="text-[13px] font-semibold text-slate-900">Total</div>
+          <div className="text-[11px] text-slate-400 tabular-nums">incl. VAT {vat.toFixed(2)} AED</div>
+        </div>
+        <div className="text-[20px] font-bold tracking-tight tabular-nums text-slate-900 leading-tight">
+          {total.toFixed(2)}<span className="ml-1 font-mono text-[11px] font-normal text-slate-500">AED</span>
         </div>
       </div>
 
+      {/* Multi-supplier warning */}
+      {multiSupplier && (
+        <p className="text-[11px] text-amber-600 flex items-center gap-1">
+          <span>⚠</span> Select a single supplier tab to enable PDF &amp; download.
+        </p>
+      )}
+
+      {/* [Copy][WA] | [PDF] */}
       <div className="grid grid-cols-2 gap-1.5">
-        <button
-          onClick={multiSupplier ? undefined : onExcel}
-          disabled={multiSupplier}
-          title={multiSupplier ? "Filter to one supplier first" : undefined}
-          className={`inline-flex h-[32px] items-center justify-center gap-1.5 rounded-[9px] border text-[12.5px] font-medium transition-colors ${multiSupplier ? "border-[#E2E8F0] text-slate-300 cursor-not-allowed" : "border-[#E2E8F0] text-slate-700 hover:bg-slate-50"}`}>
-          <FileSpreadsheet size={13} className={multiSupplier ? "text-slate-300" : "text-slate-400"} />Excel
-        </button>
+        <div className="flex gap-1">
+          <button onClick={copy}
+            className="flex-1 inline-flex h-[32px] items-center justify-center gap-1 rounded-[9px] border border-[#E2E8F0] text-[12px] font-medium text-slate-700 hover:bg-slate-50 transition-colors">
+            {copied ? <Check size={12} className="text-green-500" /> : <Copy size={12} className="text-slate-400" />}
+            {copied ? "Copied" : "Copy"}
+          </button>
+          <button onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(shareUrl)}`, "_blank")}
+            className="flex-1 inline-flex h-[32px] items-center justify-center gap-1 rounded-[9px] bg-[#25D366] text-[12px] font-semibold text-white hover:bg-[#1FBB58] transition-colors">
+            <Send size={11} />WA
+          </button>
+        </div>
         <button
           onClick={multiSupplier || pdfGenerating ? undefined : handlePDF}
           disabled={multiSupplier || pdfGenerating}
@@ -617,7 +603,7 @@ function FooterContent({ items, subtotal, vat, total, totalQty, shareUrl, cartId
         </button>
       </div>
 
-      <p className="text-[10.5px] text-slate-400 text-center">Anyone with the link can edit · prices are gross from supplier</p>
+      <p className="text-[10px] text-slate-400 text-center leading-tight">Anyone with the link can edit · prices are gross from supplier</p>
     </div>
   );
 }
