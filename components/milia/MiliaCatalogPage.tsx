@@ -151,14 +151,12 @@ export default function MiliaCatalogPage() {
   return (
     <div className="min-h-screen" style={{ background: colors.contentBg }}>
 
-      {/* Breadcrumb */}
-      <div className="px-6 pt-3 pb-1 text-xs bg-white/70 border-b border-teal-50" style={{ color: colors.textMuted }}>
-        <a href="/suppliers" className="hover:underline" style={{ color: colors.primary }}>Suppliers</a>
-        <span className="mx-1">›</span><span>Milia Cosmetics</span>
-      </div>
-
       {/* Header */}
       <div className="px-6 py-4 bg-white/80 backdrop-blur border-b border-teal-50 shadow-sm sticky top-0 z-40">
+        <div className="text-xs mb-2" style={{ color: colors.textMuted }}>
+          <a href="/suppliers" className="hover:underline" style={{ color: colors.primary }}>Suppliers</a>
+          <span className="mx-1">›</span><span>Milia Cosmetics</span>
+        </div>
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-3">
             <img src="https://miliacosmetics.com/cdn/shop/files/MILLIA-LOGO--no_background_a9192dbb-2e70-46dc-b7bd-83756031e268.png?v=1774424377" alt="Milia Cosmetics" className="h-6 sm:h-8 object-contain" onError={e => (e.target as HTMLImageElement).style.display='none'} />

@@ -314,12 +314,18 @@ export default function SuppliersPage() {
     <div className="min-h-screen flex flex-col" style={{ background: "linear-gradient(135deg, #eef4ff 0%, #f8faff 100%)" }}>
 
       {/* Header */}
-      <header className="bg-white/70 backdrop-blur border-b border-blue-100 px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center">
-            <span className="text-white text-xs font-bold">O</span>
+      <header className="bg-white/70 backdrop-blur border-b border-blue-100 px-6 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          {/* Salon slug placeholder — wire up later */}
+          <div className="flex items-center gap-2 bg-white border border-blue-100 rounded-lg px-3 py-2">
+            <MapPin className="w-3.5 h-3.5 text-blue-400" />
+            <input
+              value={location}
+              onChange={handleLocation}
+              placeholder="Salon / Location"
+              className="bg-transparent outline-none text-sm text-gray-700 placeholder-gray-300 w-40"
+            />
           </div>
-          <span className="font-semibold text-gray-800 text-sm">Order Portal</span>
         </div>
         <div className="flex items-center gap-2">
           {mounted && totalCartItems > 0 && (
@@ -331,15 +337,6 @@ export default function SuppliersPage() {
               {totalCartItems} in carts
             </button>
           )}
-          <div className="flex items-center gap-2 bg-white border border-blue-100 rounded-lg px-3 py-2">
-            <MapPin className="w-3.5 h-3.5 text-blue-400" />
-            <input
-              value={location}
-              onChange={handleLocation}
-              placeholder="Salon / Location"
-              className="bg-transparent outline-none text-sm text-gray-700 placeholder-gray-300 w-40"
-            />
-          </div>
         </div>
       </header>
 

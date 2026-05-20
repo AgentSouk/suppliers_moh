@@ -551,15 +551,14 @@ export default function LorealCatalogPage() {
 
   return (
     <div className="min-h-screen" style={{ background: colors.contentBg }}>
-      {/* Breadcrumb */}
-      <div className="px-6 pt-3 pb-1 text-xs" style={{ background: colors.cardBg, color: colors.textMuted }}>
-        <a href="/suppliers" className="hover:underline" style={{ color: colors.primary }}>Suppliers</a>
-        <span className="mx-1">›</span>
-        <span>L&apos;Oréal Professionnel</span>
-      </div>
-
       {/* Header */}
       <div className="px-4 py-3 sticky top-0 z-40" style={{ background: colors.cardBg, borderBottom: `1px solid ${colors.border}` }}>
+        {/* Breadcrumb */}
+        <div className="text-xs mb-2" style={{ color: colors.textMuted }}>
+          <a href="/suppliers" className="hover:underline" style={{ color: colors.primary }}>Suppliers</a>
+          <span className="mx-1">›</span>
+          <span>L&apos;Oréal Professionnel</span>
+        </div>
         {/* Row 1: title + action buttons */}
         <div className="flex items-center justify-between gap-2">
           <h1 className="text-xs sm:text-base font-bold truncate" style={{ color: colors.text }}>

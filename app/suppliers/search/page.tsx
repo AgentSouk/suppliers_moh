@@ -244,8 +244,8 @@ function CartPanel({
             </div>
             <div className="truncate text-[13px] text-slate-500">
               {supplierEntries.length > 0
-                ? <><b className="font-semibold text-slate-900">{supplierEntries.length}</b> supplier{supplierEntries.length !== 1 ? "s" : ""} · Salon B2B</>
-                : "Salon B2B"}
+                ? <><b className="font-semibold text-slate-900">{supplierEntries.length}</b> supplier{supplierEntries.length !== 1 ? "s" : ""}</>
+                : "No items yet"}
             </div>
           </div>
           <button

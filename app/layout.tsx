@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "B2B Beauty Portal",
-  description: "Order portal for salon professionals",
+  title: "3ish",
+  description: "Professional beauty product catalogues",
 };
 
 export default function RootLayout({
