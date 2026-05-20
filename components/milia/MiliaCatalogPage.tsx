@@ -188,7 +188,7 @@ export default function MiliaCatalogPage() {
         </div>
         <div className="relative max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-          <input className="w-full pl-9 pr-4 py-2 border border-teal-100 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-teal-400"
+          <input className="w-full pl-9 pr-4 py-2 border border-teal-100 rounded-lg text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-teal-400"
             placeholder="Search by name, SKU, brand…" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
         </div>
       </div>

@@ -610,14 +610,14 @@ export default function LorealCatalogPage() {
               placeholder="Search name, EAN, code…"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 rounded-lg border text-sm outline-none focus:ring-2"
+              className="w-full pl-9 pr-4 py-2 rounded-lg border text-sm text-gray-900 outline-none focus:ring-2"
               style={{ background: colors.cardBg, borderColor: colors.border, color: colors.text }}
             />
           </div>
           <select
             value={selectedCategory || ""}
             onChange={(e) => setSelectedCategory(e.target.value || null)}
-            className="w-full sm:w-auto px-3 py-2 rounded-lg border text-sm outline-none"
+            className="w-full sm:w-auto px-3 py-2 rounded-lg border text-sm text-gray-900 outline-none"
             style={{ background: colors.cardBg, borderColor: colors.border, color: colors.text }}
           >
             <option value="">All Categories</option>
@@ -757,7 +757,7 @@ export default function LorealCatalogPage() {
                 <input
                   type="email" required value={loginEmail}
                   onChange={(e) => setLoginEmail(e.target.value)}
-                  className="w-full px-3 py-2.5 rounded-lg border text-sm outline-none focus:ring-2"
+                  className="w-full px-3 py-2.5 rounded-lg border text-sm text-gray-900 outline-none focus:ring-2"
                   style={{ borderColor: colors.border, color: colors.text }}
                   placeholder="you@example.com"
                 />
@@ -767,7 +767,7 @@ export default function LorealCatalogPage() {
                 <input
                   type="password" required value={loginPassword}
                   onChange={(e) => setLoginPassword(e.target.value)}
-                  className="w-full px-3 py-2.5 rounded-lg border text-sm outline-none focus:ring-2"
+                  className="w-full px-3 py-2.5 rounded-lg border text-sm text-gray-900 outline-none focus:ring-2"
                   style={{ borderColor: colors.border, color: colors.text }}
                   placeholder="••••••••"
                 />
