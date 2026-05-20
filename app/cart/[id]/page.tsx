@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import {
   ArrowLeft, Search, Plus, Minus, Trash2, FileText, FileSpreadsheet,
   Share2, Copy, Check, X, Clock, Tag, MoreHorizontal,
-  ChevronDown, Loader2, Send, Sparkles, User,
+  Loader2, Send, Sparkles, User,
 } from "lucide-react";
 import * as XLSX from "xlsx";
 import { generatePO } from "@/lib/generatePO";
@@ -343,45 +343,34 @@ export default function SharedCartPage({ params }: { params: Promise<{ id: strin
       <div className="w-full lg:max-w-[520px] bg-white lg:rounded-2xl lg:shadow-sm lg:border lg:border-[#ECEFF3] flex flex-col" style={{ minHeight: "100dvh" }}>
 
         {/* Header */}
-        <header className="flex items-center gap-3 px-4 py-3.5 border-b border-[#ECEFF3] sticky top-0 bg-white z-20">
+        <header className="flex items-center gap-2.5 px-4 py-3 border-b border-[#ECEFF3] sticky top-0 bg-white z-20">
           <button onClick={() => router.push("/suppliers")}
             className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-slate-100 text-slate-500 transition-colors shrink-0">
             <ArrowLeft size={20} />
           </button>
-          <div className="flex-1 min-w-0">
-            <div className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">Shared Cart · {id}</div>
-            <div className="text-[15px] font-semibold text-slate-900 truncate">{record?.location || "—"}</div>
-          </div>
-          <SaveIndicator state={saveState} lastSaved={lastSaved} />
-          <button className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-slate-100 text-slate-400 transition-colors">
-            <MoreHorizontal size={20} />
-          </button>
-        </header>
-
-        {/* Meta card */}
-        <div className="mx-4 mt-3 mb-1 bg-[#F8FAFC] rounded-xl border border-[#ECEFF3] px-4 py-3 flex items-center gap-3">
-          <div className="flex -space-x-2 shrink-0">
-            {["?", "?"].map((_, i) => (
-              <div key={i} className="w-8 h-8 rounded-full border-2 border-white flex items-center justify-center bg-slate-200 text-slate-500"
+          <div className="flex -space-x-1.5 shrink-0">
+            {[0, 1].map((i) => (
+              <div key={i} className="w-7 h-7 rounded-full border-2 border-white flex items-center justify-center bg-slate-200 text-slate-500"
                 style={{ zIndex: 2 - i }}>
-                <User size={14} />
+                <User size={12} />
               </div>
             ))}
           </div>
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-1 text-[12px] text-slate-600 flex-wrap">
-              <b className="text-slate-900 font-semibold">{record?.location || "Shared"}</b>
-              <span className="text-slate-400">·</span>
-              <Clock size={11} className="text-slate-400" />
-              <span className="text-slate-400">{createdAt}</span>
+            <div className="text-[14px] font-semibold text-slate-900 truncate leading-tight">{record?.location || "—"}</div>
+            <div className="flex items-center gap-1 text-[10px] text-slate-400 mt-0.5">
+              <span className="font-semibold uppercase tracking-wide">Cart · {id}</span>
+              <span>·</span>
+              <Clock size={9} className="shrink-0" />
+              <span className="truncate">{createdAt}</span>
             </div>
-            <div className="text-[11px] text-slate-400 mt-0.5">{items.length} products · {totalQty} units</div>
           </div>
+          <SaveIndicator state={saveState} lastSaved={lastSaved} />
           <button onClick={copy}
-            className="flex items-center gap-1.5 bg-white border border-[#ECEFF3] rounded-full px-3 py-1.5 text-[12px] font-semibold text-slate-700 hover:bg-slate-50 transition-colors shadow-sm shrink-0">
-            {copied ? <><Check size={13} className="text-green-500" />Copied</> : <><Share2 size={13} />Share</>}
+            className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-slate-100 transition-colors shrink-0">
+            {copied ? <Check size={18} className="text-green-500" /> : <Share2 size={18} className="text-slate-500" />}
           </button>
-        </div>
+        </header>
 
         {/* Search to add */}
         <div className="px-4 py-2">
