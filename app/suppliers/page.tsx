@@ -5,7 +5,7 @@ import { saveSharedCart, type SharedCartItem } from "@/lib/sharedCart";
 import { createClient } from "@supabase/supabase-js";
 import {
   ShoppingCart, ArrowRight, MapPin, X, Trash2,
-  Clock, User, ExternalLink,
+  Clock, User, ExternalLink, Search,
 } from "lucide-react";
 import GlobalSearchPanel from "@/components/GlobalSearchPanel";
 
@@ -35,8 +35,8 @@ function readTimestamp(sid: string): string | null {
   try { return localStorage.getItem(`${sid}_cart_ts`) || null; } catch { return null; }
 }
 
-// ── Carts overview drawer ────────────────────────────────────────────────────
-// ── Carts overview drawer ────────────────────────────────────────────────────
+// ── Carts overview drawer ─────────────────────────────────────────────────────
+
 interface CartRow {
   sid: string; name: string; accent: string; logo: string; initials: string;
   qty: number; amount: number; timestamp: string | null; items: any[];
@@ -66,7 +66,6 @@ function CartsOverviewDrawer({
   useEffect(() => { load(); }, []);
 
   const handleView = (row: CartRow) => {
-    // Go to the supplier's own catalog page — cart is already in localStorage
     const sup = SUPPLIERS.find((s) => s.id === row.sid);
     onClose();
     router.push(sup?.href || "/suppliers");
@@ -90,7 +89,7 @@ function CartsOverviewDrawer({
       const id = await saveSharedCart(items, location || "salon");
       onClose();
       router.push(`/cart/${id}`);
-    } catch (e) {
+    } catch {
       alert("Could not create share link — make sure the shared_carts table exists in Supabase.");
     }
   };
@@ -102,20 +101,18 @@ function CartsOverviewDrawer({
     load();
   };
 
-  const totalQty    = rows.reduce((n, r) => n + r.qty, 0);
-  const subtotal    = rows.reduce((n, r) => n + r.amount, 0);
-  const vat         = subtotal * 0.05;
-  const total       = subtotal + vat;
+  const totalQty = rows.reduce((n, r) => n + r.qty, 0);
+  const subtotal = rows.reduce((n, r) => n + r.amount, 0);
+  const vat      = subtotal * 0.05;
+  const total    = subtotal + vat;
 
   return (
     <div className="fixed inset-0 z-50 flex justify-end">
-      <div className="absolute inset-0 bg-black/30 backdrop-blur-[1px]" onClick={onClose} />
-
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" onClick={onClose} />
       <aside
         aria-label="Active Carts"
         className="relative grid h-screen max-h-screen w-full max-w-[440px] grid-rows-[auto_1fr_auto] border-l border-slate-200 bg-white shadow-2xl"
       >
-        {/* ── Header ── */}
         <header className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2.5 overflow-hidden border-b border-slate-200 bg-gradient-to-b from-slate-50/60 to-white px-5 py-4">
           <div className="grid h-9 w-9 place-items-center rounded-[10px] bg-sky-50 text-sky-500">
             <ShoppingCart size={18} />
@@ -138,7 +135,6 @@ function CartsOverviewDrawer({
           </button>
         </header>
 
-        {/* ── Rows ── */}
         <div className="flex flex-col gap-2.5 overflow-y-auto p-4" style={{ scrollbarWidth: "thin" }}>
           {rows.length === 0 && (
             <div className="flex flex-col items-center justify-center gap-3.5 px-6 py-12 text-center text-slate-500">
@@ -151,12 +147,9 @@ function CartsOverviewDrawer({
               </p>
             </div>
           )}
-
           {rows.map((row) => (
             <div key={row.sid}
               className="grid min-w-0 grid-cols-[56px_minmax(0,1fr)_auto] gap-3.5 rounded-xl border border-slate-200 bg-white p-3 transition-colors hover:border-slate-300">
-
-              {/* Thumb — supplier logo */}
               <div className="grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-[10px] border border-slate-200 bg-gradient-to-br from-white to-slate-100 p-2">
                 {row.logo ? (
                   <img src={row.logo} alt="" className="max-w-full max-h-full object-contain mix-blend-multiply"
@@ -169,10 +162,7 @@ function CartsOverviewDrawer({
                   <span style={{ fontSize: 11, fontWeight: 700, color: row.accent }}>{row.initials}</span>
                 )}
               </div>
-
-              {/* Info */}
               <div className="flex min-w-0 flex-col gap-1.5">
-                {/* Supplier name + qty badge */}
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="font-mono text-[10.5px] font-semibold uppercase tracking-wider text-sky-700">{row.name}</span>
                   <span className="inline-flex h-[18px] items-center px-1.5 rounded-full text-[10px] font-bold text-white"
@@ -180,14 +170,10 @@ function CartsOverviewDrawer({
                     {row.qty} item{row.qty !== 1 ? "s" : ""}
                   </span>
                 </div>
-
-                {/* Timestamp */}
                 <div className="flex items-center gap-1.5 text-[11px] text-slate-400">
                   <Clock size={10} />
                   <span>{row.timestamp ?? <span className="italic">No timestamp</span>}</span>
                 </div>
-
-                {/* Amount + team member */}
                 <div className="flex items-center gap-3 text-[11px]">
                   {row.amount > 0 && (
                     <span className="font-bold tabular-nums text-slate-900">
@@ -200,8 +186,6 @@ function CartsOverviewDrawer({
                   </span>
                 </div>
               </div>
-
-              {/* Actions */}
               <div className="flex flex-col items-end justify-between gap-1.5">
                 <button type="button" onClick={() => handleDelete(row.sid)}
                   className="grid h-7 w-7 place-items-center rounded-md text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600">
@@ -223,7 +207,6 @@ function CartsOverviewDrawer({
           ))}
         </div>
 
-        {/* ── Footer ── */}
         {rows.length > 0 && (
           <footer className="flex min-w-0 flex-col gap-3 overflow-hidden border-t border-slate-200 bg-white px-4 py-4">
             <dl className="grid gap-1.5 text-[13px] text-slate-500">
@@ -250,38 +233,27 @@ function CartsOverviewDrawer({
   );
 }
 
-// ── Page ─────────────────────────────────────────────────────────────────────
+// ── Page ──────────────────────────────────────────────────────────────────────
+
 export default function SuppliersPage() {
   const router = useRouter();
-  const [cartCounts, setCartCounts] = useState<Record<string, number>>({});
-  const [location, setLocation] = useState("");
-  const [mounted, setMounted] = useState(false);
-  const [cartsOpen, setCartsOpen] = useState(false);
+  const [cartCounts, setCartCounts]   = useState<Record<string, number>>({});
+  const [location,   setLocation]     = useState("");
+  const [mounted,    setMounted]      = useState(false);
+  const [cartsOpen,  setCartsOpen]    = useState(false);
+  const [bgImage,    setBgImage]      = useState<string | null>(null);
+  const [bgLoaded,   setBgLoaded]     = useState(false);
 
-  const openSupplierCart = async (sid: string) => {
-    const cart = readCart(sid);
-    if (!cart.length) return;
-    const sup = SUPPLIERS.find((s) => s.id === sid);
-    const items: SharedCartItem[] = cart.map((i: any) => ({
-      uid: i.product?.ean || i.product?.sku || i.product?.id || i.id,
-      qty: i.quantity || 1,
-      supplier: sid,
-      supplierLabel: sup?.name || sid,
-      product: {
-        name: i.product?.name || "", brand: i.product?.brand || null,
-        price: i.product?.price ?? null, photo: i.product?.photo || null,
-        ean: i.product?.ean || null, sku: i.product?.sku || null,
-        aki_code: i.product?.aki_code || null, sub_category: i.product?.sub_category || null,
-        uom: i.product?.uom || null,
-      },
-    }));
-    try {
-      const id = await saveSharedCart(items, location || "salon");
-      router.push(`/cart/${id}`);
-    } catch {
-      router.push(`/cart/${encodeURIComponent(location || "salon")}/${cart.map((i: any) => `${i.product?.ean || i.product?.sku || i.id}_${i.quantity || 1}`).join("-")}`);
-    }
-  };
+  // Load random background image from manifest
+  useEffect(() => {
+    fetch("/supplier-backgrounds.json")
+      .then((r) => r.ok ? r.json() : Promise.reject())
+      .then((manifest: Record<string, string[]>) => {
+        const all = Object.values(manifest).flat().filter(Boolean);
+        if (all.length) setBgImage(all[Math.floor(Math.random() * all.length)]);
+      })
+      .catch(() => {/* no manifest yet — gradient fallback shown */});
+  }, []);
 
   useEffect(() => {
     setMounted(true);
@@ -315,113 +287,159 @@ export default function SuppliersPage() {
   const totalCartItems = Object.values(cartCounts).reduce((a, b) => a + b, 0);
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: "linear-gradient(135deg, #eef4ff 0%, #f8faff 100%)" }}>
+    <div className="relative min-h-screen flex flex-col">
 
-      {/* Header */}
-      <header className="bg-white/70 backdrop-blur border-b border-blue-100 px-6 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          {/* Salon slug placeholder — wire up later */}
-          <div className="flex items-center gap-2 bg-white border border-blue-100 rounded-lg px-3 py-2">
-            <MapPin className="w-3.5 h-3.5 text-blue-400" />
+      {/* ── Background ─────────────────────────────────────────────────────── */}
+      <div className="fixed inset-0 z-0">
+        {/* Gradient base — always shown, image fades in on top */}
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-zinc-900 to-neutral-900" />
+
+        {/* Supplier image */}
+        {bgImage && (
+          <img
+            src={bgImage}
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000"
+            style={{ opacity: bgLoaded ? 1 : 0 }}
+            onLoad={() => setBgLoaded(true)}
+            onError={() => setBgImage(null)}
+          />
+        )}
+
+        {/* Cinematic overlay: darkens edges, keeps centre readable */}
+        <div className="absolute inset-0"
+          style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.35) 40%, rgba(0,0,0,0.65) 100%)" }}
+        />
+        {/* Subtle vignette */}
+        <div className="absolute inset-0"
+          style={{ background: "radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.45) 100%)" }}
+        />
+      </div>
+
+      {/* ── Content ────────────────────────────────────────────────────────── */}
+      <div className="relative z-10 flex flex-col min-h-screen">
+
+        {/* Header */}
+        <header className="flex items-center justify-between px-5 py-3.5">
+          {/* Salon slug placeholder */}
+          <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl px-3 py-2">
+            <MapPin className="w-3.5 h-3.5 text-white/50 shrink-0" />
             <input
               value={location}
               onChange={handleLocation}
               placeholder="Salon / Location"
-              className="bg-transparent outline-none text-sm text-gray-700 placeholder-gray-300 w-40"
+              className="bg-transparent outline-none text-sm text-white placeholder-white/35 w-36 sm:w-44"
             />
           </div>
-        </div>
-        <div className="flex items-center gap-2">
+
           {mounted && totalCartItems > 0 && (
             <button
               onClick={() => setCartsOpen(true)}
-              className="flex items-center gap-1.5 bg-red-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm hover:bg-red-600 transition-colors"
+              className="flex items-center gap-1.5 bg-red-500/90 backdrop-blur text-white text-xs font-bold px-3 py-2 rounded-xl shadow-lg hover:bg-red-500 transition-colors"
             >
               <ShoppingCart className="w-3.5 h-3.5" />
               {totalCartItems} in carts
             </button>
           )}
-        </div>
-      </header>
+        </header>
 
-      {/* Main */}
-      <main className="flex-1 flex flex-col items-center justify-center px-6 py-16">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-light text-gray-800 mb-3">Choose your supplier</h1>
-          <p className="text-sm text-gray-500 max-w-md mx-auto leading-relaxed">
-            <span className="inline-flex items-center gap-1.5 bg-blue-50 text-blue-600 text-xs font-semibold px-2.5 py-1 rounded-full mb-2">Beta</span>
-            <br />
-            Create Order PDFs and share with suppliers &amp; your team.
-            <br />
-            <span className="text-gray-400 text-xs">Includes photos &amp; supplier barcodes.</span>
+        {/* Hero text */}
+        <div className="px-5 pt-6 pb-4 sm:pt-10 sm:pb-6 text-center">
+          <h1 className="text-2xl sm:text-4xl font-light tracking-tight text-white mb-2">
+            Choose your supplier
+          </h1>
+          <p className="text-sm text-white/45 tracking-wide">
+            Professional beauty · Order management
           </p>
         </div>
 
-        <div className="w-full max-w-2xl mb-10">
-          <GlobalSearchPanel />
+        {/* Search */}
+        <div className="px-5 pb-6 w-full max-w-2xl mx-auto">
+          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl overflow-hidden">
+            <GlobalSearchPanel dark />
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-2xl">
-          {SUPPLIERS.map((s) => (
-            <div key={s.id} className="relative">
-              <button
-                onClick={() => {
-                  if (location) localStorage.setItem("active_supplier", s.id);
-                  router.push(s.href);
-                }}
-                className="w-full group relative bg-white rounded-2xl border border-blue-100 shadow-sm hover:shadow-lg hover:border-blue-300 transition-all duration-300 p-7 text-left hover:-translate-y-0.5"
-              >
-                <div className="h-10 mb-6 flex items-center">
-                  {s.logo ? (
-                    <img src={s.logo} alt={s.name}
-                      className="max-h-full max-w-[130px] object-contain opacity-70 group-hover:opacity-100 transition-opacity mix-blend-multiply"
+        {/* Supplier grid */}
+        <main className="flex-1 px-4 sm:px-6 pb-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 w-full max-w-3xl mx-auto">
+            {SUPPLIERS.map((s) => (
+              <div key={s.id} className="relative group">
+                <button
+                  onClick={() => {
+                    if (location) localStorage.setItem("active_supplier", s.id);
+                    router.push(s.href);
+                  }}
+                  className="w-full text-left rounded-2xl border border-white/15 bg-white/8 backdrop-blur-xl p-5 sm:p-6
+                             transition-all duration-300
+                             hover:bg-white/14 hover:border-white/30 hover:shadow-xl hover:-translate-y-0.5
+                             focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+                  style={{ WebkitBackdropFilter: "blur(20px)" } as React.CSSProperties}
+                >
+                  {/* Logo pill */}
+                  <div className="mb-4 inline-flex items-center h-8 px-3 rounded-lg bg-white/90 shadow-sm">
+                    <img
+                      src={s.logo}
+                      alt={s.name}
+                      className="h-5 max-w-[100px] object-contain"
                       onError={(e) => {
-                        (e.target as HTMLImageElement).style.display = "none";
-                        (e.target as HTMLImageElement).parentElement!.innerHTML =
-                          `<span style="font-size:1.5rem;font-weight:600;color:${s.accent}">${s.initials}</span>`;
+                        const el = e.target as HTMLImageElement;
+                        el.style.display = "none";
+                        el.parentElement!.innerHTML =
+                          `<span style="font-size:12px;font-weight:700;color:${s.accent};letter-spacing:0.05em">${s.initials}</span>`;
                       }}
                     />
-                  ) : (
-                    <span style={{ fontSize: "1.5rem", fontWeight: 600, color: s.accent }}>{s.initials}</span>
-                  )}
-                </div>
-                <h2 className="text-lg font-semibold text-gray-800 mb-1">{s.name}</h2>
-                <p className="text-xs text-gray-400 mb-5">{s.subtitle}</p>
-                <div className="flex flex-wrap gap-1.5 mb-6">
-                  {s.brands.map(b => (
-                    <span key={b} className="text-[10px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-500 border border-blue-100">{b}</span>
-                  ))}
-                </div>
-                <div className="flex items-center gap-1.5 text-xs font-medium text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity">
-                  Open catalogue <ArrowRight className="w-3.5 h-3.5" />
-                </div>
-              </button>
+                  </div>
 
-              {/* Cart badge */}
-              {mounted && cartCounts[s.id] > 0 && (
-                <button
-                  onClick={(e) => { e.stopPropagation(); setCartsOpen(true); }}
-                  className="absolute bottom-5 right-5 flex items-center gap-1 text-white text-[11px] font-bold pl-2 pr-2.5 py-1 rounded-full shadow-md ring-2 ring-white transition-transform hover:scale-105"
-                  style={{ background: "#ef4444" }}
-                >
-                  <ShoppingCart className="w-3 h-3" />
-                  {cartCounts[s.id]}
+                  {/* Name + subtitle */}
+                  <h2 className="text-base sm:text-lg font-semibold text-white leading-snug mb-0.5">
+                    {s.name}
+                  </h2>
+                  <p className="text-xs text-white/45 mb-4">{s.subtitle}</p>
+
+                  {/* Brand tags */}
+                  <div className="flex flex-wrap gap-1.5 mb-5">
+                    {s.brands.map(b => (
+                      <span key={b}
+                        className="text-[10px] px-2 py-0.5 rounded-full bg-white/10 text-white/60 border border-white/15">
+                        {b}
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* CTA */}
+                  <div className="flex items-center gap-1 text-xs font-medium text-white/40 group-hover:text-white/80 transition-colors">
+                    Open catalogue <ArrowRight className="w-3 h-3" />
+                  </div>
                 </button>
-              )}
-            </div>
-          ))}
-        </div>
 
-        {!location && mounted && (
-          <p className="mt-8 text-xs text-blue-400/70 text-center">
-            Enter your salon name to sync your cart across devices
+                {/* Cart badge */}
+                {mounted && cartCounts[s.id] > 0 && (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setCartsOpen(true); }}
+                    className="absolute bottom-4 right-4 flex items-center gap-1 text-white text-[11px] font-bold pl-2 pr-2.5 py-1 rounded-full shadow-lg ring-2 ring-white/20 transition-transform hover:scale-105 bg-red-500"
+                  >
+                    <ShoppingCart className="w-3 h-3" />
+                    {cartCounts[s.id]}
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {!location && mounted && (
+            <p className="mt-8 text-center text-xs text-white/25">
+              Enter your salon name above to sync carts across devices
+            </p>
+          )}
+        </main>
+
+        <footer className="px-6 py-4 text-center">
+          <p className="text-[10px] tracking-widest uppercase text-white/20">
+            Professional Beauty · Order Management
           </p>
-        )}
-      </main>
-
-      <footer className="px-6 py-4 text-center border-t border-blue-50">
-        <p className="text-[10px] tracking-widest uppercase text-gray-300">Professional Beauty · Order Management</p>
-      </footer>
+        </footer>
+      </div>
 
       {cartsOpen && (
         <CartsOverviewDrawer

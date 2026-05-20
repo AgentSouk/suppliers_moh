@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-export default function GlobalSearchPanel() {
+export default function GlobalSearchPanel({ dark = false }: { dark?: boolean }) {
   const [query, setQuery] = useState("");
   const router = useRouter();
 
@@ -13,6 +13,30 @@ export default function GlobalSearchPanel() {
     const q = query.trim();
     if (q) router.push(`/suppliers/search?q=${encodeURIComponent(q)}`);
   };
+
+  if (dark) {
+    return (
+      <form onSubmit={submit} className="w-full max-w-xl mx-auto">
+        <div className="flex items-center gap-3 px-4 py-3">
+          <Search className="w-4 h-4 text-white/40 shrink-0" />
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search products across all suppliers…"
+            className="flex-1 bg-transparent outline-none text-sm text-white placeholder-white/35"
+          />
+          {query.trim() && (
+            <button
+              type="submit"
+              className="bg-white/20 text-white text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-white/30 transition-colors border border-white/25"
+            >
+              Search
+            </button>
+          )}
+        </div>
+      </form>
+    );
+  }
 
   return (
     <form onSubmit={submit} className="w-full max-w-xl mx-auto">
