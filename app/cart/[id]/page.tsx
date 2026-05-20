@@ -18,10 +18,8 @@ import {
 const ALL_SOURCES = [
   { sid: "loreal",       file: "/loreal_products.json",      label: "L'Oréal Professionnel", idFields: ["ean","id","aki_code"] },
   { sid: "nazih",        file: "/nazih_all_products.json",   label: "Nazih Group",            idFields: ["sku","ean"] },
-  { sid: "wella",        file: "/wella_products.json",       label: "Wella Professionals",    idFields: ["sku","slug"] },
   { sid: "madi",         file: "/madi_products.json",        label: "Madi International",     idFields: ["sku","ean","id"] },
   { sid: "victoriavynn", file: "/victoriavynn_products.json",label: "Victoria Vynn",          idFields: ["sku"] },
-  { sid: "skeyndor",     file: "/skeyndor_products.json",    label: "Skeyndor",               idFields: ["ean","sku"] },
   { sid: "milia",        file: "/milia_products.json",       label: "Milia Cosmetics",        idFields: ["sku"] },
   { sid: "awarid",       file: "/awarid_products.json",      label: "Awarid",                 idFields: ["sku"] },
 ];
@@ -74,8 +72,8 @@ function SaveIndicator({ state, lastSaved }: { state: "idle" | "saving" | "saved
 
 // ── PDF generation per supplier ───────────────────────────────────────────────
 const PREFIXES: Record<string, string> = {
-  loreal: "LOP", nazih: "NZH", wella: "WEL", madi: "MDI",
-  victoriavynn: "VVN", skeyndor: "SKY", milia: "MLI", awarid: "AWR",
+  loreal: "LOP", nazih: "NZH", madi: "MDI",
+  victoriavynn: "VVN", milia: "MLI", awarid: "AWR",
 };
 
 async function generatePDFs(
