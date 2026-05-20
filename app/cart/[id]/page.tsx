@@ -121,9 +121,30 @@ export default function SharedCartPage({ params }: { params: Promise<{ id: strin
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [searchLoading, setSearchLoading] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [dropdownTop, setDropdownTop] = useState(0);
+  const searchBoxRef = useRef<HTMLDivElement>(null);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const searchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const allProductsRef = useRef<any[] | null>(null);
+
+  const updateDropdownPos = useCallback(() => {
+    if (searchBoxRef.current) {
+      const rect = searchBoxRef.current.getBoundingClientRect();
+      setDropdownTop(rect.bottom + 4);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!searchFocused) return;
+    window.addEventListener("scroll", updateDropdownPos, true);
+    window.visualViewport?.addEventListener("resize", updateDropdownPos);
+    window.visualViewport?.addEventListener("scroll", updateDropdownPos);
+    return () => {
+      window.removeEventListener("scroll", updateDropdownPos, true);
+      window.visualViewport?.removeEventListener("resize", updateDropdownPos);
+      window.visualViewport?.removeEventListener("scroll", updateDropdownPos);
+    };
+  }, [searchFocused, updateDropdownPos]);
 
   const shareUrl = typeof window !== "undefined"
     ? `https://nxcut.com/cart/${id}`
@@ -363,11 +384,12 @@ export default function SharedCartPage({ params }: { params: Promise<{ id: strin
         </div>
 
         {/* Search to add */}
-        <div className="px-4 py-2 relative">
-          <div className={`flex items-center gap-2 rounded-xl border px-3 py-2.5 bg-white transition-all ${searchFocused ? "border-[#0091FF] shadow-[0_0_0_3px_rgba(0,145,255,0.1)]" : "border-[#ECEFF3]"}`}>
+        <div className="px-4 py-2">
+          <div ref={searchBoxRef} className={`flex items-center gap-2 rounded-xl border px-3 py-2.5 bg-white transition-all ${searchFocused ? "border-[#0091FF] shadow-[0_0_0_3px_rgba(0,145,255,0.1)]" : "border-[#ECEFF3]"}`}>
             {searchLoading ? <Loader2 size={16} className="text-[#0091FF] animate-spin shrink-0" /> : <Search size={16} className="text-slate-400 shrink-0" />}
             <input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
-              onFocus={() => setSearchFocused(true)} onBlur={() => setTimeout(() => setSearchFocused(false), 200)}
+              onFocus={() => { updateDropdownPos(); setSearchFocused(true); }}
+              onBlur={() => setTimeout(() => setSearchFocused(false), 200)}
               placeholder="Search to add products…"
               style={{ fontSize: '16px' }}
               className="flex-1 bg-transparent outline-none text-slate-900 placeholder-slate-400" />
@@ -375,7 +397,8 @@ export default function SharedCartPage({ params }: { params: Promise<{ id: strin
           </div>
 
           {searchFocused && (searchResults.length > 0 || searchQuery) && (
-            <div className="absolute left-4 right-4 top-full mt-1 bg-white rounded-xl border border-[#ECEFF3] shadow-lg z-30 overflow-hidden max-h-[50dvh] overflow-y-auto">
+            <div className="fixed left-4 right-4 bg-white rounded-xl border border-[#ECEFF3] shadow-lg z-50 overflow-hidden overflow-y-auto"
+              style={{ top: dropdownTop, maxHeight: `calc(100dvh - ${dropdownTop}px - 12px)` }}>
               {searchResults.length > 0 && (
                 <div className="px-3 py-2 border-b border-[#ECEFF3] flex items-center gap-1.5 text-[11px] font-semibold text-slate-400">
                   <Sparkles size={11} />Suggestions
