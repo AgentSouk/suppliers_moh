@@ -587,9 +587,11 @@ function SearchResults() {
         try {
           const res = await fetch(cfg.jsonFile);
           const data: any[] = await res.json();
+          const supplierMatch = cfg.label.toLowerCase().includes(q) || sid.toLowerCase().includes(q);
           return data
             .map((p, i) => normalize(p, sid, i))
             .filter((p) =>
+              supplierMatch ||
               p.name.toLowerCase().includes(q) ||
               (p.brand && p.brand.toLowerCase().includes(q)) ||
               (p.category && p.category.toLowerCase().includes(q))
