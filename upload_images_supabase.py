@@ -48,6 +48,7 @@ SUPPLIERS = {
     "albasel":      "albasel_products.json",
     "victoriavynn": "victoriavynn_products.json",
     "skeyndor":     "skeyndor_products.json",
+    "nawajm":       "nawajm_products.json",
 }
 
 # ── Helpers ───────────────────────────────────────────────────────────────────

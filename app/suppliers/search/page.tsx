@@ -98,8 +98,8 @@ function ProductCard({
 
       {/* Image */}
       <div className="relative aspect-square overflow-hidden bg-ink-50">
-        {p.raw.photo_sm ? (
-          <ImageZoom src={p.raw.photo_sm ?? undefined} zoomSrc={p.photo ?? undefined} alt={p.name} imgClassName="w-full h-full object-cover" zoomSize={260} zoomScale={2.5} />
+        {(p.raw.photo_sm || p.photo) ? (
+          <ImageZoom src={p.raw.photo_sm ?? p.photo ?? undefined} zoomSrc={p.raw.photo_sm ? (p.photo ?? undefined) : undefined} alt={p.name} imgClassName="w-full h-full object-cover" zoomSize={260} zoomScale={2.5} />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-ink-300 text-2xl select-none">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" width="36" height="36" opacity={0.25}><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
@@ -314,8 +314,8 @@ function CartPanel({
 
                           {/* Thumb */}
                           <div className="grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-[10px] border border-slate-200 bg-gradient-to-br from-white to-slate-100">
-                            {item.product.raw?.photo_sm ? (
-                              <img src={item.product.raw.photo_sm} alt="" className="w-full h-full object-cover" />
+                            {(item.product.raw?.photo_sm || item.product.photo) ? (
+                              <img src={item.product.raw?.photo_sm ?? item.product.photo ?? undefined} alt="" className="w-full h-full object-cover" />
                             ) : (
                               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" width="24" height="24" opacity={0.25}><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
                             )}
