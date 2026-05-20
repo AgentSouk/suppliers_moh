@@ -75,7 +75,7 @@ export default function EssieCatalogPage() {
     fetch("/essie_products.json")
       .then((r) => r.json())
       .then((data: EssieProduct[]) => {
-        setProducts(data);
+        setProducts(data.filter(p => p.photo));
         setLoading(false);
       })
       .catch(() => setLoading(false));

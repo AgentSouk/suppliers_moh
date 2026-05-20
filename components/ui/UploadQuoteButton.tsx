@@ -73,7 +73,7 @@ export default function UploadQuoteButton({ products, onMatch, matchFields = ["e
       </button>
 
       {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/60 px-4 py-6 flex items-start justify-center sm:items-center">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6">
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center gap-2.5">

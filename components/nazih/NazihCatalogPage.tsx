@@ -72,7 +72,7 @@ export default function NazihCatalogPage() {
     load("/nazih_all_products.json")
       .catch(() => load("/nazih_products.json"))
       .then((data: Product[]) => {
-        setProducts(data.map((p, i) => ({ ...p, id: p.url || `naz-${i}` })));
+        setProducts(data.map((p, i) => ({ ...p, id: p.url || `naz-${i}` })).filter(p => p.photo || p.photo_sm));
         setLoading(false);
       }).catch(() => setLoading(false));
   }, []);

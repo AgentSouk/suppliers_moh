@@ -54,7 +54,7 @@ export default function MiliaCatalogPage() {
     fetch("/milia_products.json")
       .then(r => { if (!r.ok) throw new Error(); return r.json(); })
       .then((data: Product[]) => {
-        setProducts(data.map((p, i) => ({ ...p, id: p.id || p.sku || `ml-${i}` })));
+        setProducts(data.map((p, i) => ({ ...p, id: p.id || p.sku || `ml-${i}` })).filter(p => p.photo || p.photo_sm));
         setLoading(false);
       }).catch(() => setLoading(false));
   }, []);

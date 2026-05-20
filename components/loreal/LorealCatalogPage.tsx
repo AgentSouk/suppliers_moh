@@ -258,7 +258,7 @@ export default function LorealCatalogPage() {
           sub_category: item.sub_category || "",
           aki_code: item.aki_code || "",
           uom: item.uom || "EA",
-        }));
+        })).filter((p: Product) => p.photo || p.photo_sm);
 
         setProducts(mapped);
       } catch (err) {

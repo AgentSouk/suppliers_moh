@@ -53,7 +53,7 @@ export default function MadiCatalogPage() {
     fetch("/madi_products.json")
       .then(r => { if (!r.ok) throw new Error(); return r.json(); })
       .then((data: Product[]) => {
-        setProducts(data.map((p, i) => ({ ...p, id: p.sku || p.id || `mad-${i}` })));
+        setProducts(data.map((p, i) => ({ ...p, id: p.sku || p.id || `mad-${i}` })).filter(p => p.photo || p.photo_sm));
         setLoading(false);
       }).catch(() => setLoading(false));
   }, []);

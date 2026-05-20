@@ -54,7 +54,7 @@ export default function AwaridCatalogPage() {
     fetch("/awarid_products.json")
       .then(r => { if (!r.ok) throw new Error(); return r.json(); })
       .then((data: Product[]) => {
-        setProducts(data.map((p, i) => ({ ...p, id: p.id || p.sku || `aw-${i}` })));
+        setProducts(data.map((p, i) => ({ ...p, id: p.id || p.sku || `aw-${i}` })).filter(p => p.photo || p.photo_sm));
         setLoading(false);
       }).catch(() => setLoading(false));
   }, []);
