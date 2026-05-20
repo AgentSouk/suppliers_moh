@@ -95,7 +95,7 @@ export default function NawajmCatalogPage() {
     addToGlobalCart({
       uid: (product as any).ean || (product as any).sku || product.id || String(Date.now()),
       supplier: "nawajm",
-      supplierLabel: "Nawajm Cosmetics",
+      supplierLabel: "Nawaim Cosmetics",
       product: {
         name: product.name || "",
         brand: product.brand ?? null,
@@ -250,7 +250,7 @@ export default function NawajmCatalogPage() {
       {/* Breadcrumb */}
       <div className="px-6 pt-3 pb-1 text-xs bg-white/70 border-b border-amber-50" style={{ color: colors.textMuted }}>
         <a href="/suppliers" className="hover:underline" style={{ color: colors.primary }}>Suppliers</a>
-        <span className="mx-1">›</span><span>Nawajm Cosmetics</span>
+        <span className="mx-1">›</span><span>Nawaim Cosmetics</span>
       </div>
 
       {/* Header */}
@@ -259,7 +259,7 @@ export default function NawajmCatalogPage() {
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-white text-sm" style={{ background: colors.primary }}>NW</div>
             <div>
-              <h1 className="text-lg font-bold text-gray-900">Nawajm Cosmetics Catalogue</h1>
+              <h1 className="text-lg font-bold text-gray-900">Nawaim Cosmetics Catalogue</h1>
               <p className="text-xs text-gray-400">{products.length} products</p>
             </div>
           </div>
@@ -481,7 +481,7 @@ export default function NawajmCatalogPage() {
               {detailProduct.url && (
                 <a href={detailProduct.url} target="_blank" rel="noopener noreferrer"
                   className="block text-xs text-center py-2 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50">
-                  View on Nawajm Cosmetics ↗
+                  View on Nawaim Cosmetics ↗
                 </a>
               )}
             </div>
@@ -524,7 +524,7 @@ export default function NawajmCatalogPage() {
             <div className="sticky top-0 px-6 py-4 flex items-center justify-between bg-white border-b border-amber-50">
               <div className="flex items-center gap-3">
                 <ShoppingCart className="w-5 h-5" style={{ color: colors.primary }} />
-                <h2 className="text-lg font-bold text-gray-900">Cart · Nawajm Cosmetics</h2>
+                <h2 className="text-lg font-bold text-gray-900">Cart · Nawaim Cosmetics</h2>
                 <span className="px-2 py-0.5 rounded-full text-xs font-bold text-white" style={{ background: colors.primary }}>{cart.length}</span>
               </div>
               <div className="flex items-center gap-2">
@@ -601,7 +601,7 @@ export default function NawajmCatalogPage() {
                     <FileSpreadsheet className="w-4 h-4" /> Excel
                   </button>
                 </div>
-                <ShareCartButton cart={cart} location={location} supplierId="nawajm" supplierLabel="Nawajm Cosmetics" />
+                <ShareCartButton cart={cart} location={location} supplierId="nawajm" supplierLabel="Nawaim Cosmetics" />
                 <button onClick={() => { if (confirm("Clear entire cart?")) clearCart(); }}
                   className="w-full mt-3 py-2 rounded-lg border border-red-200 text-red-500 text-sm hover:bg-red-50 flex items-center justify-center gap-1.5">
                   <Trash2 className="w-4 h-4" /> Clear Cart

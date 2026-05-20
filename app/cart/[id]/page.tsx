@@ -22,6 +22,7 @@ const ALL_SOURCES = [
   { sid: "victoriavynn", file: "/victoriavynn_products.json",label: "Victoria Vynn",          idFields: ["sku"] },
   { sid: "milia",        file: "/milia_products.json",       label: "Milia Cosmetics",        idFields: ["sku"] },
   { sid: "awarid",       file: "/awarid_products.json",      label: "Awarid",                 idFields: ["sku"] },
+  { sid: "nawajm",       file: "/nawajm_products.json",      label: "Nawaim Cosmetics",       idFields: ["sku","id"] },
 ];
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -73,7 +74,7 @@ function SaveIndicator({ state, lastSaved }: { state: "idle" | "saving" | "saved
 // ── PDF generation per supplier ───────────────────────────────────────────────
 const PREFIXES: Record<string, string> = {
   loreal: "LOP", nazih: "NZH", madi: "MDI",
-  victoriavynn: "VVN", milia: "MLI", awarid: "AWR",
+  victoriavynn: "VVN", milia: "MLI", awarid: "AWR", nawajm: "NWM",
 };
 
 async function generatePDFs(

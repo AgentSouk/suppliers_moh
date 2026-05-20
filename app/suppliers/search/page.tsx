@@ -29,6 +29,7 @@ const SUPPLIERS: Record<string, {
   milia:        { label: "Milia Cosmetics",        accent: "#0d9488", href: "/catalog/milia",        logo: "/logos/milia.png",         initials: "ML", jsonFile: "/milia_products.json",        normalizeId: (p, i) => p.sku || p.id || `mil-${i}` },
   awarid:       { label: "Awarid",                 accent: "#b45309", href: "/catalog/awarid",       logo: "/logos/awarid.png",        initials: "AW", jsonFile: "/awarid_products.json",       normalizeId: (p, i) => p.sku || p.id || `awr-${i}` },
   albasel:      { label: "Al Basel Cosmetics",     accent: "#b8860b", href: "/catalog/albasel",      logo: "/logos/albasel.svg",       initials: "AB", jsonFile: "/albasel_products.json",      normalizeId: (p, i) => p.id || p.sku || `ab-${i}` },
+  nawajm:       { label: "Nawaim Cosmetics",       accent: "#d97706", href: "/catalog/nawajm",       logo: "https://nawaimcosmetics.ae/cdn/shop/files/Logo_Black.png?v=1733657769&width=180", initials: "NW", jsonFile: "/nawajm_products.json", normalizeId: (p, i) => p.id || p.sku || `nwm-${i}` },
 };
 
 // ── Types ─────────────────────────────────────────────────────────────────────
