@@ -59,7 +59,7 @@ function SaveIndicator({ state, lastSaved }: { state: "idle" | "saving" | "saved
     return (
       <span className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full bg-green-50 text-green-600 whitespace-nowrap">
         <Check size={10} />
-        {state === "saving" ? "Saving…" : `Saved ${ts}`}
+        {`Saved ${ts}`}
       </span>
     );
   }
