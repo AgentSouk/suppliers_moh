@@ -465,7 +465,7 @@ export default function SharedCartPage({ params }: { params: Promise<{ id: strin
 
         {/* Mobile footer */}
         {items.length > 0 && (
-          <footer className="sticky bottom-0 bg-white border-t border-[#ECEFF3] px-4 pt-4 pb-5 lg:hidden">
+          <footer className="sticky bottom-0 bg-white border-t border-[#ECEFF3] px-4 pt-3 pb-4 lg:hidden">
             <FooterContent items={filtered} subtotal={filtered.reduce((s,i)=>s+(i.product.price||0)*i.qty,0)} vat={filtered.reduce((s,i)=>s+(i.product.price||0)*i.qty,0)*0.05} total={filtered.reduce((s,i)=>s+(i.product.price||0)*i.qty,0)*1.05} totalQty={filtered.reduce((s,i)=>s+i.qty,0)}
               shareUrl={localUrl} cartId={id} onPDF={() => generatePDFs(filtered, record?.location || "")}
               onExcel={() => generateExcel(filtered, record?.location || "", id)} />
@@ -508,8 +508,8 @@ function FooterContent({ items, subtotal, vat, total, totalQty, shareUrl, cartId
   const multiSupplier = uniqueSuppliers > 1;
 
   return (
-    <div className="flex flex-col gap-3">
-      <dl className="grid gap-1.5 text-[13px] text-slate-500">
+    <div className="flex flex-col gap-2">
+      <dl className="grid gap-1 text-[13px] text-slate-500">
         <div className="flex items-center justify-between">
           <dt>Subtotal · {totalQty} unit{totalQty !== 1 ? "s" : ""}</dt>
           <dd className="font-semibold tabular-nums text-slate-900">{subtotal.toFixed(2)} AED</dd>
@@ -518,9 +518,9 @@ function FooterContent({ items, subtotal, vat, total, totalQty, shareUrl, cartId
           <dt>VAT (5%)</dt>
           <dd className="font-semibold tabular-nums text-slate-900">{vat.toFixed(2)} AED</dd>
         </div>
-        <div className="flex items-baseline justify-between pt-2.5 mt-1 border-t border-dashed border-[#ECEFF3]">
+        <div className="flex items-baseline justify-between pt-1.5 mt-0.5 border-t border-dashed border-[#ECEFF3]">
           <dt className="text-[14px] font-semibold text-slate-900">Total</dt>
-          <dd className="text-[22px] font-bold tracking-tight tabular-nums text-slate-900">
+          <dd className="text-[19px] font-bold tracking-tight tabular-nums text-slate-900">
             {total.toFixed(2)}<span className="ml-1 font-mono text-[11px] font-normal text-slate-500">AED</span>
           </dd>
         </div>
@@ -552,14 +552,14 @@ function FooterContent({ items, subtotal, vat, total, totalQty, shareUrl, cartId
           onClick={multiSupplier ? undefined : onExcel}
           disabled={multiSupplier}
           title={multiSupplier ? "Filter to one supplier first" : undefined}
-          className={`inline-flex h-[38px] items-center justify-center gap-1.5 rounded-[9px] border text-[12.5px] font-medium transition-colors ${multiSupplier ? "border-[#E2E8F0] text-slate-300 cursor-not-allowed" : "border-[#E2E8F0] text-slate-700 hover:bg-slate-50"}`}>
+          className={`inline-flex h-[32px] items-center justify-center gap-1.5 rounded-[9px] border text-[12.5px] font-medium transition-colors ${multiSupplier ? "border-[#E2E8F0] text-slate-300 cursor-not-allowed" : "border-[#E2E8F0] text-slate-700 hover:bg-slate-50"}`}>
           <FileSpreadsheet size={13} className={multiSupplier ? "text-slate-300" : "text-slate-400"} />Excel
         </button>
         <button
           onClick={multiSupplier ? undefined : onPDF}
           disabled={multiSupplier}
           title={multiSupplier ? "Filter to one supplier first" : undefined}
-          className={`inline-flex h-[38px] items-center justify-center gap-1.5 rounded-[9px] border text-[12.5px] font-medium transition-colors ${multiSupplier ? "border-[#E2E8F0] text-slate-300 cursor-not-allowed" : "border-[#E2E8F0] text-slate-700 hover:bg-slate-50"}`}>
+          className={`inline-flex h-[32px] items-center justify-center gap-1.5 rounded-[9px] border text-[12.5px] font-medium transition-colors ${multiSupplier ? "border-[#E2E8F0] text-slate-300 cursor-not-allowed" : "border-[#E2E8F0] text-slate-700 hover:bg-slate-50"}`}>
           <FileText size={13} className={multiSupplier ? "text-slate-300" : "text-slate-400"} />PDF
         </button>
       </div>
