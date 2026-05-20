@@ -56,7 +56,10 @@ export default function NawajmCatalogPage() {
     fetch("/nawajm_products.json")
       .then(r => { if (!r.ok) throw new Error(); return r.json(); })
       .then((data: Product[]) => {
-        setProducts(data.map((p, i) => ({ ...p, id: p.id || p.sku || `nw-${i}` })).filter(p => p.photo || p.photo_sm));
+        setProducts(data
+          .map((p, i) => ({ ...p, id: p.id || p.sku || `nw-${i}` }))
+          .filter(p => p.photo || p.photo_sm)
+          .sort((a, b) => ((b.price ?? 0) > 0 ? 1 : 0) - ((a.price ?? 0) > 0 ? 1 : 0)));
         setLoading(false);
       }).catch(() => setLoading(false));
   }, []);
@@ -259,9 +262,9 @@ export default function NawajmCatalogPage() {
       <div className="px-6 py-4 bg-white/80 backdrop-blur border-b border-amber-50 shadow-sm sticky top-0 z-40">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-white text-sm" style={{ background: colors.primary }}>NW</div>
+            <img src="https://nawaimcosmetics.ae/cdn/shop/files/Logo_Black.png?v=1733657769&width=180" alt="Nawaim" className="h-6 sm:h-8 object-contain" onError={e => { (e.target as HTMLImageElement).style.display='none'; }} />
             <div>
-              <h1 className="text-lg font-bold text-gray-900">Nawaim Cosmetics Catalogue</h1>
+              <h1 className="text-xs sm:text-lg font-bold text-gray-900">Nawaim Cosmetics Catalogue</h1>
               <p className="text-xs text-gray-400">{products.length} products</p>
             </div>
           </div>

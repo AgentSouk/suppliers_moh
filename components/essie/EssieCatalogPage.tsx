@@ -342,9 +342,9 @@ export default function EssieCatalogPage() {
       <header className="bg-white border-b border-gray-200 sticky top-0 z-40 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <span className="text-2xl font-bold text-red-600 tracking-tight">essie</span>
-            <span className="text-gray-300 text-xl">|</span>
-            <span className="text-gray-600 text-sm font-medium">Nail Colour Catalogue</span>
+            <span className="text-lg sm:text-2xl font-bold text-red-600 tracking-tight">essie</span>
+            <span className="text-gray-300 text-xl hidden sm:inline">|</span>
+            <span className="text-gray-600 text-xs sm:text-sm font-medium hidden sm:inline">Nail Colour Catalogue</span>
           </div>
 
           <div className="flex-1 max-w-md">

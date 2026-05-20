@@ -166,9 +166,9 @@ export default function MadiCatalogPage() {
       <div className="px-6 py-4 bg-white/80 backdrop-blur border-b border-gray-100 shadow-sm sticky top-0 z-40">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-3">
-            <img src="/logos/madi.svg" alt="Madi" className="h-8 object-contain" onError={e => (e.target as HTMLImageElement).style.display='none'} />
+            <img src="/logos/madi.svg" alt="Madi" className="h-6 sm:h-8 object-contain" onError={e => (e.target as HTMLImageElement).style.display='none'} />
             <div>
-              <h1 className="text-lg font-bold text-gray-900">Madi International Catalogue</h1>
+              <h1 className="text-xs sm:text-lg font-bold text-gray-900">Madi International Catalogue</h1>
               <p className="text-xs text-gray-400">{products.length} products · {brands.length} brands</p>
             </div>
           </div>

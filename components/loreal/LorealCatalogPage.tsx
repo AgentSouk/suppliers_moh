@@ -562,7 +562,7 @@ export default function LorealCatalogPage() {
       <div className="px-4 py-3 sticky top-0 z-40" style={{ background: colors.cardBg, borderBottom: `1px solid ${colors.border}` }}>
         {/* Row 1: title + action buttons */}
         <div className="flex items-center justify-between gap-2">
-          <h1 className="text-base font-bold truncate" style={{ color: colors.text }}>
+          <h1 className="text-xs sm:text-base font-bold truncate" style={{ color: colors.text }}>
             L&apos;Oréal Catalogue
           </h1>
           <div className="flex items-center gap-2 shrink-0">
