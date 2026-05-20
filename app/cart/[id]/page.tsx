@@ -369,12 +369,13 @@ export default function SharedCartPage({ params }: { params: Promise<{ id: strin
             <input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
               onFocus={() => setSearchFocused(true)} onBlur={() => setTimeout(() => setSearchFocused(false), 200)}
               placeholder="Search to add products…"
-              className="flex-1 bg-transparent outline-none text-[13.5px] text-slate-900 placeholder-slate-400" />
+              style={{ fontSize: '16px' }}
+              className="flex-1 bg-transparent outline-none text-slate-900 placeholder-slate-400" />
             {searchQuery && <button onClick={() => setSearchQuery("")} className="text-slate-400 hover:text-slate-600"><X size={14} /></button>}
           </div>
 
           {searchFocused && (searchResults.length > 0 || searchQuery) && (
-            <div className="absolute left-4 right-4 top-full mt-1 bg-white rounded-xl border border-[#ECEFF3] shadow-lg z-30 overflow-hidden max-h-[60vh] overflow-y-auto">
+            <div className="absolute left-4 right-4 top-full mt-1 bg-white rounded-xl border border-[#ECEFF3] shadow-lg z-30 overflow-hidden max-h-[50dvh] overflow-y-auto">
               {searchResults.length > 0 && (
                 <div className="px-3 py-2 border-b border-[#ECEFF3] flex items-center gap-1.5 text-[11px] font-semibold text-slate-400">
                   <Sparkles size={11} />Suggestions
@@ -464,7 +465,7 @@ export default function SharedCartPage({ params }: { params: Promise<{ id: strin
         </div>
 
         {/* Mobile footer */}
-        {items.length > 0 && (
+        {items.length > 0 && !searchFocused && (
           <footer className="sticky bottom-0 bg-white border-t border-[#ECEFF3] px-4 pt-3 pb-4 lg:hidden">
             <FooterContent items={filtered} subtotal={filtered.reduce((s,i)=>s+(i.product.price||0)*i.qty,0)} vat={filtered.reduce((s,i)=>s+(i.product.price||0)*i.qty,0)*0.05} total={filtered.reduce((s,i)=>s+(i.product.price||0)*i.qty,0)*1.05} totalQty={filtered.reduce((s,i)=>s+i.qty,0)}
               shareUrl={localUrl} cartId={id} onPDF={() => generatePDFs(filtered, record?.location || "")}
