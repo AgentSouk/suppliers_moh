@@ -8,6 +8,7 @@ Weekly re-scrape instructions for all suppliers. Output JSONs go to `public/` in
 
 | Scraper | Supplier | Method | Resume-safe | Time |
 |---|---|---|---|---|
+| `homepage_images_scraper.py` | **All suppliers** — homepage background images | Mixed (Shopify API + HTML + Playwright) | ✅ | ~5 min |
 | `awarid_scraper.py` | Awarid | Shopify JSON API | ✅ | ~2 min |
 | `albasel_scraper.py` | Al Basel Cosmetics | Sitemap + page JSON-LD | ✅ | ~12 min |
 | `milia_scraper.py` | Milia Cosmetics | Shopify JSON API | ✅ | ~30 sec |
@@ -286,6 +287,45 @@ python3 madi_download_images.py
 | `essie_scraper.py` | One-off — Essie is included in the L'Oréal supplier data |
 | `schwarzkopf_scraper.py` | Never integrated into portal — scraper exists but no catalog page |
 | `nazih_scraper.py` | Old version replaced by `nazih_full_scraper.py` |
+
+---
+
+## Homepage Background Image Scraper
+
+**`homepage_images_scraper.py`** — fetches editorial/hero images from every active
+supplier website and saves them for use as rotating full-page backgrounds on
+`/suppliers`.
+
+```bash
+pip install playwright playwright-stealth requests Pillow
+playwright install chromium
+
+python3 homepage_images_scraper.py
+```
+
+**Output:**
+- `public/images/supplier-bg/{supplier}_{n}.jpg` — up to 6 images per supplier
+- `public/supplier-backgrounds.json` — manifest read by the `/suppliers` page
+
+**How it works per supplier type:**
+
+| Type | Suppliers | Method |
+|---|---|---|
+| Shopify API | awarid, milia, nawajm, albasel | `/collections.json` featured images + homepage srcset |
+| Plain HTML | — | HTTP fetch → og:image + large srcset |
+| Playwright | loreal, nazih, victoriavynn, madi, essie | Headless Chromium, grabs rendered `<img>` + CSS backgrounds |
+
+**Cron (weekly, Monday 03:00):**
+```
+0 3 * * 1  cd /path/to/repo && python3 upload_scrapper_contabo/homepage_images_scraper.py
+```
+
+After running, commit the updated images and manifest:
+```bash
+git add public/images/supplier-bg/ public/supplier-backgrounds.json
+git commit -m "chore: refresh supplier background images"
+git push
+```
 
 ---
 
