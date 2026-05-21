@@ -5,7 +5,7 @@ import { saveSharedCart, type SharedCartItem } from "@/lib/sharedCart";
 import { createClient } from "@supabase/supabase-js";
 import {
   ShoppingCart, ArrowRight, MapPin, X, Trash2,
-  Clock, User, ExternalLink, Search,
+  Clock, User, ExternalLink,
 } from "lucide-react";
 import GlobalSearchPanel from "@/components/GlobalSearchPanel";
 
@@ -108,7 +108,7 @@ function CartsOverviewDrawer({
 
   return (
     <div className="fixed inset-0 z-50 flex justify-end">
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" onClick={onClose} />
+      <div className="absolute inset-0 bg-black/30 backdrop-blur-[1px]" onClick={onClose} />
       <aside
         aria-label="Active Carts"
         className="relative grid h-screen max-h-screen w-full max-w-[440px] grid-rows-[auto_1fr_auto] border-l border-slate-200 bg-white shadow-2xl"
@@ -237,14 +237,14 @@ function CartsOverviewDrawer({
 
 export default function SuppliersPage() {
   const router = useRouter();
-  const [cartCounts, setCartCounts]   = useState<Record<string, number>>({});
-  const [location,   setLocation]     = useState("");
-  const [mounted,    setMounted]      = useState(false);
-  const [cartsOpen,  setCartsOpen]    = useState(false);
-  const [bgImage,    setBgImage]      = useState<string | null>(null);
-  const [bgLoaded,   setBgLoaded]     = useState(false);
+  const [cartCounts, setCartCounts] = useState<Record<string, number>>({});
+  const [location,   setLocation]   = useState("");
+  const [mounted,    setMounted]    = useState(false);
+  const [cartsOpen,  setCartsOpen]  = useState(false);
+  const [bgImage,    setBgImage]    = useState<string | null>(null);
+  const [bgLoaded,   setBgLoaded]   = useState(false);
 
-  // Load random background image from manifest
+  // Pick one random product photo from the manifest on load
   useEffect(() => {
     fetch("/supplier-backgrounds.json")
       .then((r) => r.ok ? r.json() : Promise.reject())
@@ -252,7 +252,7 @@ export default function SuppliersPage() {
         const all = Object.values(manifest).flat().filter(Boolean);
         if (all.length) setBgImage(all[Math.floor(Math.random() * all.length)]);
       })
-      .catch(() => {/* no manifest yet — gradient fallback shown */});
+      .catch(() => {/* no manifest — plain gradient shown */});
   }, []);
 
   useEffect(() => {
@@ -289,53 +289,45 @@ export default function SuppliersPage() {
   return (
     <div className="relative min-h-screen flex flex-col">
 
-      {/* ── Background ─────────────────────────────────────────────────────── */}
-      <div className="fixed inset-0 z-0">
-        {/* Gradient base — always shown, image fades in on top */}
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-zinc-900 to-neutral-900" />
+      {/* ── Background photo layer ──────────────────────────────────────── */}
+      <div className="fixed inset-0 z-0 overflow-hidden">
+        {/* Base gradient — always visible, matches original brand colors */}
+        <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, #dbeafe 0%, #eff6ff 40%, #f0f9ff 100%)" }} />
 
-        {/* Supplier image */}
+        {/* Supplier product photo — fades in, blurred, very faint */}
         {bgImage && (
           <img
             src={bgImage}
             alt=""
             className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000"
-            style={{ opacity: bgLoaded ? 1 : 0 }}
+            style={{ opacity: bgLoaded ? 0.18 : 0, filter: "blur(2px) saturate(1.4)", transform: "scale(1.05)" }}
             onLoad={() => setBgLoaded(true)}
             onError={() => setBgImage(null)}
           />
         )}
 
-        {/* Cinematic overlay: darkens edges, keeps centre readable */}
-        <div className="absolute inset-0"
-          style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.35) 40%, rgba(0,0,0,0.65) 100%)" }}
-        />
-        {/* Subtle vignette */}
-        <div className="absolute inset-0"
-          style={{ background: "radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.45) 100%)" }}
-        />
+        {/* Light wash so cards stay fully readable */}
+        <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(239,246,255,0.55) 0%, rgba(255,255,255,0.15) 50%, rgba(239,246,255,0.6) 100%)" }} />
       </div>
 
-      {/* ── Content ────────────────────────────────────────────────────────── */}
+      {/* ── Content ─────────────────────────────────────────────────────── */}
       <div className="relative z-10 flex flex-col min-h-screen">
 
         {/* Header */}
-        <header className="flex items-center justify-between px-5 py-3.5">
-          {/* Salon slug placeholder */}
-          <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl px-3 py-2">
-            <MapPin className="w-3.5 h-3.5 text-white/50 shrink-0" />
+        <header className="bg-white/70 backdrop-blur border-b border-blue-100 px-5 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-2 bg-white border border-blue-100 rounded-lg px-3 py-2">
+            <MapPin className="w-3.5 h-3.5 text-blue-400 shrink-0" />
             <input
               value={location}
               onChange={handleLocation}
               placeholder="Salon / Location"
-              className="bg-transparent outline-none text-sm text-white placeholder-white/35 w-36 sm:w-44"
+              className="bg-transparent outline-none text-sm text-gray-700 placeholder-gray-300 w-36 sm:w-44"
             />
           </div>
-
           {mounted && totalCartItems > 0 && (
             <button
               onClick={() => setCartsOpen(true)}
-              className="flex items-center gap-1.5 bg-red-500/90 backdrop-blur text-white text-xs font-bold px-3 py-2 rounded-xl shadow-lg hover:bg-red-500 transition-colors"
+              className="flex items-center gap-1.5 bg-red-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm hover:bg-red-600 transition-colors"
             >
               <ShoppingCart className="w-3.5 h-3.5" />
               {totalCartItems} in carts
@@ -343,81 +335,62 @@ export default function SuppliersPage() {
           )}
         </header>
 
-        {/* Hero text */}
-        <div className="px-5 pt-6 pb-4 sm:pt-10 sm:pb-6 text-center">
-          <h1 className="text-2xl sm:text-4xl font-light tracking-tight text-white mb-2">
-            Choose your supplier
-          </h1>
-          <p className="text-sm text-white/45 tracking-wide">
-            Professional beauty · Order management
+        {/* Hero */}
+        <div className="px-5 pt-10 pb-4 text-center">
+          <h1 className="text-3xl font-light text-gray-800 mb-2">Choose your supplier</h1>
+          <p className="text-sm text-gray-400">
+            Create order PDFs · Share with suppliers &amp; your team
           </p>
         </div>
 
         {/* Search */}
-        <div className="px-5 pb-6 w-full max-w-2xl mx-auto">
-          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl overflow-hidden">
-            <GlobalSearchPanel dark />
-          </div>
+        <div className="px-5 pb-8 w-full max-w-2xl mx-auto">
+          <GlobalSearchPanel />
         </div>
 
         {/* Supplier grid */}
-        <main className="flex-1 px-4 sm:px-6 pb-10">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 w-full max-w-3xl mx-auto">
+        <main className="flex-1 px-4 sm:px-6 pb-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full max-w-2xl mx-auto">
             {SUPPLIERS.map((s) => (
-              <div key={s.id} className="relative group">
+              <div key={s.id} className="relative">
                 <button
                   onClick={() => {
                     if (location) localStorage.setItem("active_supplier", s.id);
                     router.push(s.href);
                   }}
-                  className="w-full text-left rounded-2xl border border-white/15 bg-white/8 backdrop-blur-xl p-5 sm:p-6
-                             transition-all duration-300
-                             hover:bg-white/14 hover:border-white/30 hover:shadow-xl hover:-translate-y-0.5
-                             focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
-                  style={{ WebkitBackdropFilter: "blur(20px)" } as React.CSSProperties}
+                  className="w-full group relative bg-white rounded-2xl border border-blue-100 shadow-sm hover:shadow-lg hover:border-blue-300 transition-all duration-300 p-7 text-left hover:-translate-y-0.5"
                 >
-                  {/* Logo pill */}
-                  <div className="mb-4 inline-flex items-center h-8 px-3 rounded-lg bg-white/90 shadow-sm">
-                    <img
-                      src={s.logo}
-                      alt={s.name}
-                      className="h-5 max-w-[100px] object-contain"
-                      onError={(e) => {
-                        const el = e.target as HTMLImageElement;
-                        el.style.display = "none";
-                        el.parentElement!.innerHTML =
-                          `<span style="font-size:12px;font-weight:700;color:${s.accent};letter-spacing:0.05em">${s.initials}</span>`;
-                      }}
-                    />
+                  <div className="h-10 mb-6 flex items-center">
+                    {s.logo ? (
+                      <img src={s.logo} alt={s.name}
+                        className="max-h-full max-w-[130px] object-contain opacity-70 group-hover:opacity-100 transition-opacity mix-blend-multiply"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).style.display = "none";
+                          (e.target as HTMLImageElement).parentElement!.innerHTML =
+                            `<span style="font-size:1.5rem;font-weight:600;color:${s.accent}">${s.initials}</span>`;
+                        }}
+                      />
+                    ) : (
+                      <span style={{ fontSize: "1.5rem", fontWeight: 600, color: s.accent }}>{s.initials}</span>
+                    )}
                   </div>
-
-                  {/* Name + subtitle */}
-                  <h2 className="text-base sm:text-lg font-semibold text-white leading-snug mb-0.5">
-                    {s.name}
-                  </h2>
-                  <p className="text-xs text-white/45 mb-4">{s.subtitle}</p>
-
-                  {/* Brand tags */}
-                  <div className="flex flex-wrap gap-1.5 mb-5">
+                  <h2 className="text-lg font-semibold text-gray-800 mb-1">{s.name}</h2>
+                  <p className="text-xs text-gray-400 mb-5">{s.subtitle}</p>
+                  <div className="flex flex-wrap gap-1.5 mb-6">
                     {s.brands.map(b => (
-                      <span key={b}
-                        className="text-[10px] px-2 py-0.5 rounded-full bg-white/10 text-white/60 border border-white/15">
-                        {b}
-                      </span>
+                      <span key={b} className="text-[10px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-500 border border-blue-100">{b}</span>
                     ))}
                   </div>
-
-                  {/* CTA */}
-                  <div className="flex items-center gap-1 text-xs font-medium text-white/40 group-hover:text-white/80 transition-colors">
-                    Open catalogue <ArrowRight className="w-3 h-3" />
+                  <div className="flex items-center gap-1.5 text-xs font-medium text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                    Open catalogue <ArrowRight className="w-3.5 h-3.5" />
                   </div>
                 </button>
 
-                {/* Cart badge */}
                 {mounted && cartCounts[s.id] > 0 && (
                   <button
                     onClick={(e) => { e.stopPropagation(); setCartsOpen(true); }}
-                    className="absolute bottom-4 right-4 flex items-center gap-1 text-white text-[11px] font-bold pl-2 pr-2.5 py-1 rounded-full shadow-lg ring-2 ring-white/20 transition-transform hover:scale-105 bg-red-500"
+                    className="absolute bottom-5 right-5 flex items-center gap-1 text-white text-[11px] font-bold pl-2 pr-2.5 py-1 rounded-full shadow-md ring-2 ring-white transition-transform hover:scale-105"
+                    style={{ background: "#ef4444" }}
                   >
                     <ShoppingCart className="w-3 h-3" />
                     {cartCounts[s.id]}
@@ -428,16 +401,14 @@ export default function SuppliersPage() {
           </div>
 
           {!location && mounted && (
-            <p className="mt-8 text-center text-xs text-white/25">
-              Enter your salon name above to sync carts across devices
+            <p className="mt-8 text-xs text-blue-400/70 text-center">
+              Enter your salon name to sync your cart across devices
             </p>
           )}
         </main>
 
-        <footer className="px-6 py-4 text-center">
-          <p className="text-[10px] tracking-widest uppercase text-white/20">
-            Professional Beauty · Order Management
-          </p>
+        <footer className="px-6 py-4 text-center border-t border-blue-50/60">
+          <p className="text-[10px] tracking-widest uppercase text-gray-300">Professional Beauty · Order Management</p>
         </footer>
       </div>
 
